@@ -1,0 +1,120 @@
+{
+  "name": "stg_employee",
+  "sql": "SELECT\n  Id AS employee_id,\n  LastName AS last_name,\n  FirstName AS first_name,\n  Title AS job_title,\n  City,\n  Country\nFROM Employee\nWHERE Photo IS  NULL\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "column": "employee_id",
+      "source": "employee_id",
+      "type": "number",
+      "description": ""
+    },
+    {
+      "column": "last_name",
+      "source": "last_name",
+      "type": "string",
+      "description": ""
+    },
+    {
+      "column": "first_name",
+      "source": "first_name",
+      "type": "string",
+      "description": ""
+    },
+    {
+      "column": "job_title",
+      "source": "job_title",
+      "type": "string",
+      "description": ""
+    },
+    {
+      "column": "City",
+      "source": "City",
+      "type": "string",
+      "description": ""
+    },
+    {
+      "column": "Country",
+      "source": "Country",
+      "type": "string",
+      "description": ""
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_employee\n    description: \"\"\n    columns:\n      - name: undefined\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n      - name: undefined\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: undefined\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: undefined\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: undefined\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: undefined\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null",
+  "preview": [
+    {
+      "employee_id": 1,
+      "last_name": "Davolio",
+      "first_name": "Nancy",
+      "job_title": "Sales Representative",
+      "City": "Seattle",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 2,
+      "last_name": "Fuller",
+      "first_name": "Andrew",
+      "job_title": "Vice President, Sales",
+      "City": "Tacoma",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 3,
+      "last_name": "Leverling",
+      "first_name": "Janet",
+      "job_title": "Sales Representative",
+      "City": "Kirkland",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 4,
+      "last_name": "Peacock",
+      "first_name": "Margaret",
+      "job_title": "Sales Representative",
+      "City": "Redmond",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 5,
+      "last_name": "Buchanan",
+      "first_name": "Steven",
+      "job_title": "Sales Manager",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 6,
+      "last_name": "Suyama",
+      "first_name": "Michael",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 7,
+      "last_name": "King",
+      "first_name": "Robert",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 8,
+      "last_name": "Callahan",
+      "first_name": "Laura",
+      "job_title": "Inside Sales Coordinator",
+      "City": "Seattle",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 9,
+      "last_name": "Dodsworth",
+      "first_name": "Anne",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    }
+  ],
+  "timestamp": "2025-07-18T11:20:31.130Z"
+}

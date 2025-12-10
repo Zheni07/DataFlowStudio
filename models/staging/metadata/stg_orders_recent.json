@@ -1,0 +1,648 @@
+{
+  "name": "stg_orders_recent",
+  "sql": "SELECT\n  Id                  AS order_id,\n  CustomerId          AS customer_id,\n  OrderDate           AS order_date,\n  ShipCountry         AS ship_country\nFROM \"Order\"\nWHERE date(OrderDate) >= '2012-01-01';\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "order_id",
+      "type": "number",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": true
+    },
+    {
+      "name": "customer_id",
+      "type": "string",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "order_date",
+      "type": "date",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "ship_country",
+      "type": "string",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_orders_recent\n    description: \"\"\n    columns:\n      - name: order_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n          - unique\n      - name: customer_id\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: order_date\n        description: \"\"\n        data_type: date\n        tests:\n          - not_null\n      - name: ship_country\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null",
+  "preview": [
+    {
+      "order_id": 10248,
+      "customer_id": "VINET",
+      "order_date": "2012-07-04",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10249,
+      "customer_id": "TOMSP",
+      "order_date": "2012-07-05",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10250,
+      "customer_id": "HANAR",
+      "order_date": "2012-07-08",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10251,
+      "customer_id": "VICTE",
+      "order_date": "2012-07-08",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10252,
+      "customer_id": "SUPRD",
+      "order_date": "2012-07-09",
+      "ship_country": "Belgium"
+    },
+    {
+      "order_id": 10253,
+      "customer_id": "HANAR",
+      "order_date": "2012-07-10",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10254,
+      "customer_id": "CHOPS",
+      "order_date": "2012-07-11",
+      "ship_country": "Switzerland"
+    },
+    {
+      "order_id": 10255,
+      "customer_id": "RICSU",
+      "order_date": "2012-07-12",
+      "ship_country": "Switzerland"
+    },
+    {
+      "order_id": 10256,
+      "customer_id": "WELLI",
+      "order_date": "2012-07-15",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10257,
+      "customer_id": "HILAA",
+      "order_date": "2012-07-16",
+      "ship_country": "Venezuela"
+    },
+    {
+      "order_id": 10258,
+      "customer_id": "ERNSH",
+      "order_date": "2012-07-17",
+      "ship_country": "Austria"
+    },
+    {
+      "order_id": 10259,
+      "customer_id": "CENTC",
+      "order_date": "2012-07-18",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10260,
+      "customer_id": "OTTIK",
+      "order_date": "2012-07-19",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10261,
+      "customer_id": "QUEDE",
+      "order_date": "2012-07-19",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10262,
+      "customer_id": "RATTC",
+      "order_date": "2012-07-22",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10263,
+      "customer_id": "ERNSH",
+      "order_date": "2012-07-23",
+      "ship_country": "Austria"
+    },
+    {
+      "order_id": 10264,
+      "customer_id": "FOLKO",
+      "order_date": "2012-07-24",
+      "ship_country": "Sweden"
+    },
+    {
+      "order_id": 10265,
+      "customer_id": "BLONP",
+      "order_date": "2012-07-25",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10266,
+      "customer_id": "WARTH",
+      "order_date": "2012-07-26",
+      "ship_country": "Finland"
+    },
+    {
+      "order_id": 10267,
+      "customer_id": "FRANK",
+      "order_date": "2012-07-29",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10268,
+      "customer_id": "GROSR",
+      "order_date": "2012-07-30",
+      "ship_country": "Venezuela"
+    },
+    {
+      "order_id": 10269,
+      "customer_id": "WHITC",
+      "order_date": "2012-07-31",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10270,
+      "customer_id": "WARTH",
+      "order_date": "2012-08-01",
+      "ship_country": "Finland"
+    },
+    {
+      "order_id": 10271,
+      "customer_id": "SPLIR",
+      "order_date": "2012-08-01",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10272,
+      "customer_id": "RATTC",
+      "order_date": "2012-08-02",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10273,
+      "customer_id": "QUICK",
+      "order_date": "2012-08-05",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10274,
+      "customer_id": "VINET",
+      "order_date": "2012-08-06",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10275,
+      "customer_id": "MAGAA",
+      "order_date": "2012-08-07",
+      "ship_country": "Italy"
+    },
+    {
+      "order_id": 10276,
+      "customer_id": "TORTU",
+      "order_date": "2012-08-08",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10277,
+      "customer_id": "MORGK",
+      "order_date": "2012-08-09",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10278,
+      "customer_id": "BERGS",
+      "order_date": "2012-08-12",
+      "ship_country": "Sweden"
+    },
+    {
+      "order_id": 10279,
+      "customer_id": "LEHMS",
+      "order_date": "2012-08-13",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10280,
+      "customer_id": "BERGS",
+      "order_date": "2012-08-14",
+      "ship_country": "Sweden"
+    },
+    {
+      "order_id": 10281,
+      "customer_id": "ROMEY",
+      "order_date": "2012-08-14",
+      "ship_country": "Spain"
+    },
+    {
+      "order_id": 10282,
+      "customer_id": "ROMEY",
+      "order_date": "2012-08-15",
+      "ship_country": "Spain"
+    },
+    {
+      "order_id": 10283,
+      "customer_id": "LILAS",
+      "order_date": "2012-08-16",
+      "ship_country": "Venezuela"
+    },
+    {
+      "order_id": 10284,
+      "customer_id": "LEHMS",
+      "order_date": "2012-08-19",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10285,
+      "customer_id": "QUICK",
+      "order_date": "2012-08-20",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10286,
+      "customer_id": "QUICK",
+      "order_date": "2012-08-21",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10287,
+      "customer_id": "RICAR",
+      "order_date": "2012-08-22",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10288,
+      "customer_id": "REGGC",
+      "order_date": "2012-08-23",
+      "ship_country": "Italy"
+    },
+    {
+      "order_id": 10289,
+      "customer_id": "BSBEV",
+      "order_date": "2012-08-26",
+      "ship_country": "UK"
+    },
+    {
+      "order_id": 10290,
+      "customer_id": "COMMI",
+      "order_date": "2012-08-27",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10291,
+      "customer_id": "QUEDE",
+      "order_date": "2012-08-27",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10292,
+      "customer_id": "TRADH",
+      "order_date": "2012-08-28",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10293,
+      "customer_id": "TORTU",
+      "order_date": "2012-08-29",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10294,
+      "customer_id": "RATTC",
+      "order_date": "2012-08-30",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10295,
+      "customer_id": "VINET",
+      "order_date": "2012-09-02",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10296,
+      "customer_id": "LILAS",
+      "order_date": "2012-09-03",
+      "ship_country": "Venezuela"
+    },
+    {
+      "order_id": 10297,
+      "customer_id": "BLONP",
+      "order_date": "2012-09-04",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10298,
+      "customer_id": "HUNGO",
+      "order_date": "2012-09-05",
+      "ship_country": "Ireland"
+    },
+    {
+      "order_id": 10299,
+      "customer_id": "RICAR",
+      "order_date": "2012-09-06",
+      "ship_country": "Brazil"
+    },
+    {
+      "order_id": 10300,
+      "customer_id": "MAGAA",
+      "order_date": "2012-09-09",
+      "ship_country": "Italy"
+    },
+    {
+      "order_id": 10301,
+      "customer_id": "WANDK",
+      "order_date": "2012-09-09",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10302,
+      "customer_id": "SUPRD",
+      "order_date": "2012-09-10",
+      "ship_country": "Belgium"
+    },
+    {
+      "order_id": 10303,
+      "customer_id": "GODOS",
+      "order_date": "2012-09-11",
+      "ship_country": "Spain"
+    },
+    {
+      "order_id": 10304,
+      "customer_id": "TORTU",
+      "order_date": "2012-09-12",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10305,
+      "customer_id": "OLDWO",
+      "order_date": "2012-09-13",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10306,
+      "customer_id": "ROMEY",
+      "order_date": "2012-09-16",
+      "ship_country": "Spain"
+    },
+    {
+      "order_id": 10307,
+      "customer_id": "LONEP",
+      "order_date": "2012-09-17",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10308,
+      "customer_id": "ANATR",
+      "order_date": "2012-09-18",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10309,
+      "customer_id": "HUNGO",
+      "order_date": "2012-09-19",
+      "ship_country": "Ireland"
+    },
+    {
+      "order_id": 10310,
+      "customer_id": "THEBI",
+      "order_date": "2012-09-20",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10311,
+      "customer_id": "DUMO",
+      "order_date": "2012-09-20",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10312,
+      "customer_id": "WANDK",
+      "order_date": "2012-09-23",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10313,
+      "customer_id": "QUICK",
+      "order_date": "2012-09-24",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10314,
+      "customer_id": "RATTC",
+      "order_date": "2012-09-25",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10315,
+      "customer_id": "ISLAT",
+      "order_date": "2012-09-26",
+      "ship_country": "UK"
+    },
+    {
+      "order_id": 10316,
+      "customer_id": "RATTC",
+      "order_date": "2012-09-27",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10317,
+      "customer_id": "LONEP",
+      "order_date": "2012-09-30",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10318,
+      "customer_id": "ISLAT",
+      "order_date": "2012-10-01",
+      "ship_country": "UK"
+    },
+    {
+      "order_id": 10319,
+      "customer_id": "TORTU",
+      "order_date": "2012-10-02",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10320,
+      "customer_id": "WARTH",
+      "order_date": "2012-10-03",
+      "ship_country": "Finland"
+    },
+    {
+      "order_id": 10321,
+      "customer_id": "ISLAT",
+      "order_date": "2012-10-03",
+      "ship_country": "UK"
+    },
+    {
+      "order_id": 10322,
+      "customer_id": "PERIC",
+      "order_date": "2012-10-04",
+      "ship_country": "Mexico"
+    },
+    {
+      "order_id": 10323,
+      "customer_id": "KOENE",
+      "order_date": "2012-10-07",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10324,
+      "customer_id": "SAVEA",
+      "order_date": "2012-10-08",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10325,
+      "customer_id": "KOENE",
+      "order_date": "2012-10-09",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10326,
+      "customer_id": "BOLID",
+      "order_date": "2012-10-10",
+      "ship_country": "Spain"
+    },
+    {
+      "order_id": 10327,
+      "customer_id": "FOLKO",
+      "order_date": "2012-10-11",
+      "ship_country": "Sweden"
+    },
+    {
+      "order_id": 10328,
+      "customer_id": "FURIB",
+      "order_date": "2012-10-14",
+      "ship_country": "Portugal"
+    },
+    {
+      "order_id": 10329,
+      "customer_id": "SPLIR",
+      "order_date": "2012-10-15",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10330,
+      "customer_id": "LILAS",
+      "order_date": "2012-10-16",
+      "ship_country": "Venezuela"
+    },
+    {
+      "order_id": 10331,
+      "customer_id": "BONAP",
+      "order_date": "2012-10-16",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10332,
+      "customer_id": "MEREP",
+      "order_date": "2012-10-17",
+      "ship_country": "Canada"
+    },
+    {
+      "order_id": 10333,
+      "customer_id": "WARTH",
+      "order_date": "2012-10-18",
+      "ship_country": "Finland"
+    },
+    {
+      "order_id": 10334,
+      "customer_id": "VICTE",
+      "order_date": "2012-10-21",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10335,
+      "customer_id": "HUNGO",
+      "order_date": "2012-10-22",
+      "ship_country": "Ireland"
+    },
+    {
+      "order_id": 10336,
+      "customer_id": "PRINI",
+      "order_date": "2012-10-23",
+      "ship_country": "Portugal"
+    },
+    {
+      "order_id": 10337,
+      "customer_id": "FRANK",
+      "order_date": "2012-10-24",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10338,
+      "customer_id": "OLDWO",
+      "order_date": "2012-10-25",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10339,
+      "customer_id": "MEREP",
+      "order_date": "2012-10-28",
+      "ship_country": "Canada"
+    },
+    {
+      "order_id": 10340,
+      "customer_id": "BONAP",
+      "order_date": "2012-10-29",
+      "ship_country": "France"
+    },
+    {
+      "order_id": 10341,
+      "customer_id": "SIMOB",
+      "order_date": "2012-10-29",
+      "ship_country": "Denmark"
+    },
+    {
+      "order_id": 10342,
+      "customer_id": "FRANK",
+      "order_date": "2012-10-30",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10343,
+      "customer_id": "LEHMS",
+      "order_date": "2012-10-31",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10344,
+      "customer_id": "WHITC",
+      "order_date": "2012-11-01",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10345,
+      "customer_id": "QUICK",
+      "order_date": "2012-11-04",
+      "ship_country": "Germany"
+    },
+    {
+      "order_id": 10346,
+      "customer_id": "RATTC",
+      "order_date": "2012-11-05",
+      "ship_country": "USA"
+    },
+    {
+      "order_id": 10347,
+      "customer_id": "FAMIA",
+      "order_date": "2012-11-06",
+      "ship_country": "Brazil"
+    }
+  ],
+  "timestamp": "2025-07-21T11:15:00.631Z"
+}

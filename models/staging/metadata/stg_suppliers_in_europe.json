@@ -1,0 +1,108 @@
+{
+  "name": "stg_suppliers_in_europe",
+  "sql": "SELECT\n  Id              AS supplier_id,\n  CompanyName     AS company_name,\n  Country         AS country,\n  Phone           AS phone\nFROM Supplier\nWHERE Country IN ('UK', 'Germany', 'France', 'Italy');\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "supplier_id",
+      "type": "number",
+      "description": "",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "company_name",
+      "type": "string",
+      "description": "",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "description": "",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "description": "",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_suppliers_in_europe\n    description: \"\"\n    columns:\n      - name: supplier_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n          - unique\n      - name: company_name\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n          - unique\n      - name: country\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: phone\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n          - unique",
+  "preview": [
+    {
+      "supplier_id": 1,
+      "company_name": "Exotic Liquids",
+      "country": "UK",
+      "phone": "(171) 555-2222"
+    },
+    {
+      "supplier_id": 8,
+      "company_name": "Specialty Biscuits, Ltd.",
+      "country": "UK",
+      "phone": "(161) 555-4448"
+    },
+    {
+      "supplier_id": 11,
+      "company_name": "Heli Süßwaren GmbH & Co. KG",
+      "country": "Germany",
+      "phone": "(010) 9984510"
+    },
+    {
+      "supplier_id": 12,
+      "company_name": "Plutzer Lebensmittelgroßmärkte AG",
+      "country": "Germany",
+      "phone": "(069) 992755"
+    },
+    {
+      "supplier_id": 13,
+      "company_name": "Nord-Ost-Fisch Handelsgesellschaft mbH",
+      "country": "Germany",
+      "phone": "(04721) 8713"
+    },
+    {
+      "supplier_id": 14,
+      "company_name": "Formaggi Fortini s.r.l.",
+      "country": "Italy",
+      "phone": "(0544) 60323"
+    },
+    {
+      "supplier_id": 18,
+      "company_name": "Aux joyeux ecclésiastiques",
+      "country": "France",
+      "phone": "(1) 03.83.00.68"
+    },
+    {
+      "supplier_id": 26,
+      "company_name": "Pasta Buttini s.r.l.",
+      "country": "Italy",
+      "phone": "(089) 6547665"
+    },
+    {
+      "supplier_id": 27,
+      "company_name": "Escargots Nouveaux",
+      "country": "France",
+      "phone": "85.57.00.07"
+    },
+    {
+      "supplier_id": 28,
+      "company_name": "Gai pâturage",
+      "country": "France",
+      "phone": "38.76.98.06"
+    }
+  ],
+  "timestamp": "2025-07-21T11:19:07.227Z"
+}

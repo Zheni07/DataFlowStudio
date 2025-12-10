@@ -1,0 +1,32 @@
+{
+  "runId": "fcd33892-93a5-4907-af51-764431944533",
+  "mode": "dataflow",
+  "curatedName": "curated_product_inventory",
+  "rowLimit": 10000,
+  "sql": "SELECT\n    e.employee_id,\n    e.last_name,\n    e.first_name,\n    e.job_title,\n    e.city,\n    e.country\nFROM stg_employee e\nORDER BY e.last_name, e.first_name;",
+  "startedAt": "2025-12-10T11:57:09.745Z",
+  "finishedAt": "2025-12-10T11:57:09.750Z",
+  "rowsProcessed": 9,
+  "reportPath": "fcd33892-93a5-4907-af51-764431944533.html",
+  "jsonPath": "fcd33892-93a5-4907-af51-764431944533.json",
+  "final": {
+    "elapsedMs": 4.5886,
+    "cpuUserMs": 0,
+    "cpuSystemMs": 0,
+    "rssMb": 47.85,
+    "rowsProcessed": 9,
+    "status": "done",
+    "ts": 1765367829750
+  },
+  "samples": [
+    {
+      "elapsedMs": 4.5886,
+      "cpuUserMs": 0,
+      "cpuSystemMs": 0,
+      "rssMb": 47.85,
+      "rowsProcessed": 9,
+      "status": "done",
+      "ts": 1765367829750
+    }
+  ]
+}

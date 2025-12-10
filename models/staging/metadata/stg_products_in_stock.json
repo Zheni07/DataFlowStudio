@@ -1,0 +1,456 @@
+{
+  "name": "stg_products_in_stock",
+  "sql": "SELECT\n  Id              AS product_id,\n  ProductName     AS product_name,\n  UnitPrice       AS unit_price,\n  UnitsInStock    AS stock\nFROM Product\nWHERE UnitsInStock > 0 AND Discontinued = 0;\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "product_id",
+      "type": "number",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "product_name",
+      "type": "string",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "unit_price",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "stock",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_products_in_stock\n    description: \"\"\n    columns:\n      - name: product_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n          - unique\n      - name: product_name\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n          - unique\n      - name: unit_price\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n      - name: stock\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null",
+  "preview": [
+    {
+      "product_id": 1,
+      "product_name": "Chai",
+      "unit_price": 18,
+      "stock": 39
+    },
+    {
+      "product_id": 2,
+      "product_name": "Chang",
+      "unit_price": 19,
+      "stock": 17
+    },
+    {
+      "product_id": 3,
+      "product_name": "Aniseed Syrup",
+      "unit_price": 10,
+      "stock": 13
+    },
+    {
+      "product_id": 4,
+      "product_name": "Chef Anton's Cajun Seasoning",
+      "unit_price": 22,
+      "stock": 53
+    },
+    {
+      "product_id": 6,
+      "product_name": "Grandma's Boysenberry Spread",
+      "unit_price": 25,
+      "stock": 120
+    },
+    {
+      "product_id": 7,
+      "product_name": "Uncle Bob's Organic Dried Pears",
+      "unit_price": 30,
+      "stock": 15
+    },
+    {
+      "product_id": 8,
+      "product_name": "Northwoods Cranberry Sauce",
+      "unit_price": 40,
+      "stock": 6
+    },
+    {
+      "product_id": 10,
+      "product_name": "Ikura",
+      "unit_price": 31,
+      "stock": 31
+    },
+    {
+      "product_id": 11,
+      "product_name": "Queso Cabrales",
+      "unit_price": 21,
+      "stock": 22
+    },
+    {
+      "product_id": 12,
+      "product_name": "Queso Manchego La Pastora",
+      "unit_price": 38,
+      "stock": 86
+    },
+    {
+      "product_id": 13,
+      "product_name": "Konbu",
+      "unit_price": 6,
+      "stock": 24
+    },
+    {
+      "product_id": 14,
+      "product_name": "Tofu",
+      "unit_price": 23.25,
+      "stock": 35
+    },
+    {
+      "product_id": 15,
+      "product_name": "Genen Shouyu",
+      "unit_price": 15.5,
+      "stock": 39
+    },
+    {
+      "product_id": 16,
+      "product_name": "Pavlova",
+      "unit_price": 17.45,
+      "stock": 29
+    },
+    {
+      "product_id": 18,
+      "product_name": "Carnarvon Tigers",
+      "unit_price": 62.5,
+      "stock": 42
+    },
+    {
+      "product_id": 19,
+      "product_name": "Teatime Chocolate Biscuits",
+      "unit_price": 9.2,
+      "stock": 25
+    },
+    {
+      "product_id": 20,
+      "product_name": "Sir Rodney's Marmalade",
+      "unit_price": 81,
+      "stock": 40
+    },
+    {
+      "product_id": 21,
+      "product_name": "Sir Rodney's Scones",
+      "unit_price": 10,
+      "stock": 3
+    },
+    {
+      "product_id": 22,
+      "product_name": "Gustaf's Knäckebröd",
+      "unit_price": 21,
+      "stock": 104
+    },
+    {
+      "product_id": 23,
+      "product_name": "Tunnbröd",
+      "unit_price": 9,
+      "stock": 61
+    },
+    {
+      "product_id": 25,
+      "product_name": "NuNuCa Nuß-Nougat-Creme",
+      "unit_price": 14,
+      "stock": 76
+    },
+    {
+      "product_id": 26,
+      "product_name": "Gumbär Gummibärchen",
+      "unit_price": 31.23,
+      "stock": 15
+    },
+    {
+      "product_id": 27,
+      "product_name": "Schoggi Schokolade",
+      "unit_price": 43.9,
+      "stock": 49
+    },
+    {
+      "product_id": 30,
+      "product_name": "Nord-Ost Matjeshering",
+      "unit_price": 25.89,
+      "stock": 10
+    },
+    {
+      "product_id": 32,
+      "product_name": "Mascarpone Fabioli",
+      "unit_price": 32,
+      "stock": 9
+    },
+    {
+      "product_id": 33,
+      "product_name": "Geitost",
+      "unit_price": 2.5,
+      "stock": 112
+    },
+    {
+      "product_id": 34,
+      "product_name": "Sasquatch Ale",
+      "unit_price": 14,
+      "stock": 111
+    },
+    {
+      "product_id": 35,
+      "product_name": "Steeleye Stout",
+      "unit_price": 18,
+      "stock": 20
+    },
+    {
+      "product_id": 36,
+      "product_name": "Inlagd Sill",
+      "unit_price": 19,
+      "stock": 112
+    },
+    {
+      "product_id": 37,
+      "product_name": "Gravad lax",
+      "unit_price": 26,
+      "stock": 11
+    },
+    {
+      "product_id": 38,
+      "product_name": "Côte de Blaye",
+      "unit_price": 263.5,
+      "stock": 17
+    },
+    {
+      "product_id": 39,
+      "product_name": "Chartreuse verte",
+      "unit_price": 18,
+      "stock": 69
+    },
+    {
+      "product_id": 40,
+      "product_name": "Boston Crab Meat",
+      "unit_price": 18.4,
+      "stock": 123
+    },
+    {
+      "product_id": 41,
+      "product_name": "Jack's New England Clam Chowder",
+      "unit_price": 9.65,
+      "stock": 85
+    },
+    {
+      "product_id": 43,
+      "product_name": "Ipoh Coffee",
+      "unit_price": 46,
+      "stock": 17
+    },
+    {
+      "product_id": 44,
+      "product_name": "Gula Malacca",
+      "unit_price": 19.45,
+      "stock": 27
+    },
+    {
+      "product_id": 45,
+      "product_name": "Rogede sild",
+      "unit_price": 9.5,
+      "stock": 5
+    },
+    {
+      "product_id": 46,
+      "product_name": "Spegesild",
+      "unit_price": 12,
+      "stock": 95
+    },
+    {
+      "product_id": 47,
+      "product_name": "Zaanse koeken",
+      "unit_price": 9.5,
+      "stock": 36
+    },
+    {
+      "product_id": 48,
+      "product_name": "Chocolade",
+      "unit_price": 12.75,
+      "stock": 15
+    },
+    {
+      "product_id": 49,
+      "product_name": "Maxilaku",
+      "unit_price": 20,
+      "stock": 10
+    },
+    {
+      "product_id": 50,
+      "product_name": "Valkoinen suklaa",
+      "unit_price": 16.25,
+      "stock": 65
+    },
+    {
+      "product_id": 51,
+      "product_name": "Manjimup Dried Apples",
+      "unit_price": 53,
+      "stock": 20
+    },
+    {
+      "product_id": 52,
+      "product_name": "Filo Mix",
+      "unit_price": 7,
+      "stock": 38
+    },
+    {
+      "product_id": 54,
+      "product_name": "Tourtière",
+      "unit_price": 7.45,
+      "stock": 21
+    },
+    {
+      "product_id": 55,
+      "product_name": "Pâté chinois",
+      "unit_price": 24,
+      "stock": 115
+    },
+    {
+      "product_id": 56,
+      "product_name": "Gnocchi di nonna Alice",
+      "unit_price": 38,
+      "stock": 21
+    },
+    {
+      "product_id": 57,
+      "product_name": "Ravioli Angelo",
+      "unit_price": 19.5,
+      "stock": 36
+    },
+    {
+      "product_id": 58,
+      "product_name": "Escargots de Bourgogne",
+      "unit_price": 13.25,
+      "stock": 62
+    },
+    {
+      "product_id": 59,
+      "product_name": "Raclette Courdavault",
+      "unit_price": 55,
+      "stock": 79
+    },
+    {
+      "product_id": 60,
+      "product_name": "Camembert Pierrot",
+      "unit_price": 34,
+      "stock": 19
+    },
+    {
+      "product_id": 61,
+      "product_name": "Sirop d'érable",
+      "unit_price": 28.5,
+      "stock": 113
+    },
+    {
+      "product_id": 62,
+      "product_name": "Tarte au sucre",
+      "unit_price": 49.3,
+      "stock": 17
+    },
+    {
+      "product_id": 63,
+      "product_name": "Vegie-spread",
+      "unit_price": 43.9,
+      "stock": 24
+    },
+    {
+      "product_id": 64,
+      "product_name": "Wimmers gute Semmelknödel",
+      "unit_price": 33.25,
+      "stock": 22
+    },
+    {
+      "product_id": 65,
+      "product_name": "Louisiana Fiery Hot Pepper Sauce",
+      "unit_price": 21.05,
+      "stock": 76
+    },
+    {
+      "product_id": 66,
+      "product_name": "Louisiana Hot Spiced Okra",
+      "unit_price": 17,
+      "stock": 4
+    },
+    {
+      "product_id": 67,
+      "product_name": "Laughing Lumberjack Lager",
+      "unit_price": 14,
+      "stock": 52
+    },
+    {
+      "product_id": 68,
+      "product_name": "Scottish Longbreads",
+      "unit_price": 12.5,
+      "stock": 6
+    },
+    {
+      "product_id": 69,
+      "product_name": "Gudbrandsdalsost",
+      "unit_price": 36,
+      "stock": 26
+    },
+    {
+      "product_id": 70,
+      "product_name": "Outback Lager",
+      "unit_price": 15,
+      "stock": 15
+    },
+    {
+      "product_id": 71,
+      "product_name": "Flotemysost",
+      "unit_price": 21.5,
+      "stock": 26
+    },
+    {
+      "product_id": 72,
+      "product_name": "Mozzarella di Giovanni",
+      "unit_price": 34.8,
+      "stock": 14
+    },
+    {
+      "product_id": 73,
+      "product_name": "Röd Kaviar",
+      "unit_price": 15,
+      "stock": 101
+    },
+    {
+      "product_id": 74,
+      "product_name": "Longlife Tofu",
+      "unit_price": 10,
+      "stock": 4
+    },
+    {
+      "product_id": 75,
+      "product_name": "Rhönbräu Klosterbier",
+      "unit_price": 7.75,
+      "stock": 125
+    },
+    {
+      "product_id": 76,
+      "product_name": "Lakkalikööri",
+      "unit_price": 18,
+      "stock": 57
+    },
+    {
+      "product_id": 77,
+      "product_name": "Original Frankfurter grüne Soße",
+      "unit_price": 13,
+      "stock": 32
+    }
+  ],
+  "timestamp": "2025-07-21T11:16:17.570Z"
+}

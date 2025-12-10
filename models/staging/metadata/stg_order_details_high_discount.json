@@ -1,0 +1,648 @@
+{
+  "name": "stg_order_details_high_discount",
+  "sql": "SELECT\n  Id              AS order_detail_id,\n  OrderId         AS order_id,\n  ProductId       AS product_id,\n  Discount        AS discount\nFROM OrderDetail\nWHERE Discount >= 0.2;\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "order_detail_id",
+      "type": "string",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "order_id",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": true,
+      "testUnique": true
+    },
+    {
+      "name": "product_id",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "discount",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_order_details_high_discount\n    description: \"\"\n    columns:\n      - name: order_detail_id\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n          - unique\n      - name: order_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n      - name: product_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n      - name: discount\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null",
+  "preview": [
+    {
+      "order_detail_id": "10258/2",
+      "order_id": 10258,
+      "product_id": 2,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10258/5",
+      "order_id": 10258,
+      "product_id": 5,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10258/32",
+      "order_id": 10258,
+      "product_id": 32,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10260/41",
+      "order_id": 10260,
+      "product_id": 41,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10260/62",
+      "order_id": 10260,
+      "product_id": 62,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10260/70",
+      "order_id": 10260,
+      "product_id": 70,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10262/5",
+      "order_id": 10262,
+      "product_id": 5,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10263/16",
+      "order_id": 10263,
+      "product_id": 16,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10263/30",
+      "order_id": 10263,
+      "product_id": 30,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10263/74",
+      "order_id": 10263,
+      "product_id": 74,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10279/17",
+      "order_id": 10279,
+      "product_id": 17,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10284/27",
+      "order_id": 10284,
+      "product_id": 27,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10284/60",
+      "order_id": 10284,
+      "product_id": 60,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10284/67",
+      "order_id": 10284,
+      "product_id": 67,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10285/1",
+      "order_id": 10285,
+      "product_id": 1,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10285/40",
+      "order_id": 10285,
+      "product_id": 40,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10285/53",
+      "order_id": 10285,
+      "product_id": 53,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10298/36",
+      "order_id": 10298,
+      "product_id": 36,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10298/59",
+      "order_id": 10298,
+      "product_id": 59,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10327/2",
+      "order_id": 10327,
+      "product_id": 2,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10327/11",
+      "order_id": 10327,
+      "product_id": 11,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10327/30",
+      "order_id": 10327,
+      "product_id": 30,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10327/58",
+      "order_id": 10327,
+      "product_id": 58,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10332/18",
+      "order_id": 10332,
+      "product_id": 18,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10332/42",
+      "order_id": 10332,
+      "product_id": 42,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10332/47",
+      "order_id": 10332,
+      "product_id": 47,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10335/2",
+      "order_id": 10335,
+      "product_id": 2,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10335/31",
+      "order_id": 10335,
+      "product_id": 31,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10335/32",
+      "order_id": 10335,
+      "product_id": 32,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10335/51",
+      "order_id": 10335,
+      "product_id": 51,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10342/2",
+      "order_id": 10342,
+      "product_id": 2,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10342/31",
+      "order_id": 10342,
+      "product_id": 31,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10342/36",
+      "order_id": 10342,
+      "product_id": 36,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10342/55",
+      "order_id": 10342,
+      "product_id": 55,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10344/8",
+      "order_id": 10344,
+      "product_id": 8,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10353/11",
+      "order_id": 10353,
+      "product_id": 11,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10353/38",
+      "order_id": 10353,
+      "product_id": 38,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10357/10",
+      "order_id": 10357,
+      "product_id": 10,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10357/60",
+      "order_id": 10357,
+      "product_id": 60,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10369/56",
+      "order_id": 10369,
+      "product_id": 56,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10371/36",
+      "order_id": 10371,
+      "product_id": 36,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10372/20",
+      "order_id": 10372,
+      "product_id": 20,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10372/38",
+      "order_id": 10372,
+      "product_id": 38,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10372/60",
+      "order_id": 10372,
+      "product_id": 60,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10372/72",
+      "order_id": 10372,
+      "product_id": 72,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10373/58",
+      "order_id": 10373,
+      "product_id": 58,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10373/71",
+      "order_id": 10373,
+      "product_id": 71,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10385/7",
+      "order_id": 10385,
+      "product_id": 7,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10385/60",
+      "order_id": 10385,
+      "product_id": 60,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10385/68",
+      "order_id": 10385,
+      "product_id": 68,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10388/45",
+      "order_id": 10388,
+      "product_id": 45,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10388/52",
+      "order_id": 10388,
+      "product_id": 52,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10393/2",
+      "order_id": 10393,
+      "product_id": 2,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10393/14",
+      "order_id": 10393,
+      "product_id": 14,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10393/25",
+      "order_id": 10393,
+      "product_id": 25,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10393/26",
+      "order_id": 10393,
+      "product_id": 26,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10411/41",
+      "order_id": 10411,
+      "product_id": 41,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10411/44",
+      "order_id": 10411,
+      "product_id": 44,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10411/59",
+      "order_id": 10411,
+      "product_id": 59,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10417/46",
+      "order_id": 10417,
+      "product_id": 46,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10417/68",
+      "order_id": 10417,
+      "product_id": 68,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10424/35",
+      "order_id": 10424,
+      "product_id": 35,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10424/38",
+      "order_id": 10424,
+      "product_id": 38,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10424/68",
+      "order_id": 10424,
+      "product_id": 68,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10425/55",
+      "order_id": 10425,
+      "product_id": 55,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10425/76",
+      "order_id": 10425,
+      "product_id": 76,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10429/63",
+      "order_id": 10429,
+      "product_id": 63,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10430/17",
+      "order_id": 10430,
+      "product_id": 17,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10430/59",
+      "order_id": 10430,
+      "product_id": 59,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10431/17",
+      "order_id": 10431,
+      "product_id": 17,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10431/40",
+      "order_id": 10431,
+      "product_id": 40,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10431/47",
+      "order_id": 10431,
+      "product_id": 47,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10438/19",
+      "order_id": 10438,
+      "product_id": 19,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10438/34",
+      "order_id": 10438,
+      "product_id": 34,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10438/57",
+      "order_id": 10438,
+      "product_id": 57,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10443/11",
+      "order_id": 10443,
+      "product_id": 11,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10450/10",
+      "order_id": 10450,
+      "product_id": 10,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10450/54",
+      "order_id": 10450,
+      "product_id": 54,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10454/16",
+      "order_id": 10454,
+      "product_id": 16,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10454/33",
+      "order_id": 10454,
+      "product_id": 33,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10454/46",
+      "order_id": 10454,
+      "product_id": 46,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10460/68",
+      "order_id": 10460,
+      "product_id": 68,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10460/75",
+      "order_id": 10460,
+      "product_id": 75,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10461/21",
+      "order_id": 10461,
+      "product_id": 21,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10461/30",
+      "order_id": 10461,
+      "product_id": 30,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10461/55",
+      "order_id": 10461,
+      "product_id": 55,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10464/4",
+      "order_id": 10464,
+      "product_id": 4,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10464/56",
+      "order_id": 10464,
+      "product_id": 56,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10477/21",
+      "order_id": 10477,
+      "product_id": 21,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10477/39",
+      "order_id": 10477,
+      "product_id": 39,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10487/54",
+      "order_id": 10487,
+      "product_id": 54,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10488/73",
+      "order_id": 10488,
+      "product_id": 73,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10489/11",
+      "order_id": 10489,
+      "product_id": 11,
+      "discount": 0.25
+    },
+    {
+      "order_detail_id": "10513/21",
+      "order_id": 10513,
+      "product_id": 21,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10513/32",
+      "order_id": 10513,
+      "product_id": 32,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10513/61",
+      "order_id": 10513,
+      "product_id": 61,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10522/1",
+      "order_id": 10522,
+      "product_id": 1,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10522/30",
+      "order_id": 10522,
+      "product_id": 30,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10522/40",
+      "order_id": 10522,
+      "product_id": 40,
+      "discount": 0.2
+    },
+    {
+      "order_detail_id": "10528/33",
+      "order_id": 10528,
+      "product_id": 33,
+      "discount": 0.2
+    }
+  ],
+  "timestamp": "2025-07-21T11:20:44.703Z"
+}

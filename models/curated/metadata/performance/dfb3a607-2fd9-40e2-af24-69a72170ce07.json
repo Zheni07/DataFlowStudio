@@ -1,0 +1,32 @@
+{
+  "runId": "dfb3a607-2fd9-40e2-af24-69a72170ce07",
+  "mode": "dataflow",
+  "curatedName": "curated_product_inventory",
+  "rowLimit": 10000,
+  "sql": "SELECT\n    e.employee_id,\n    e.last_name,\n    e.first_name,\n    e.job_title,\n    e.city,\n    e.country\nFROM stg_employee e\nORDER BY e.last_name, e.first_name;",
+  "startedAt": "2025-12-10T11:56:24.472Z",
+  "finishedAt": "2025-12-10T11:56:24.566Z",
+  "rowsProcessed": 9,
+  "reportPath": "dfb3a607-2fd9-40e2-af24-69a72170ce07.html",
+  "jsonPath": "dfb3a607-2fd9-40e2-af24-69a72170ce07.json",
+  "final": {
+    "elapsedMs": 93.641,
+    "cpuUserMs": 31,
+    "cpuSystemMs": 15,
+    "rssMb": 47.04,
+    "rowsProcessed": 9,
+    "status": "done",
+    "ts": 1765367784566
+  },
+  "samples": [
+    {
+      "elapsedMs": 93.641,
+      "cpuUserMs": 31,
+      "cpuSystemMs": 15,
+      "rssMb": 47.04,
+      "rowsProcessed": 9,
+      "status": "done",
+      "ts": 1765367784566
+    }
+  ]
+}

@@ -1,0 +1,486 @@
+{
+  "name": "curated_total_sales_by_customer1",
+  "sql": "SELECT\n  o.CustomerId AS customer_id,\n  COUNT(DISTINCT od.OrderId) AS orders_count,\n  SUM(od.UnitPrice * od.Quantity * (1 - COALESCE(od.Discount, 0))) AS total_sales\nFROM \"Order\" o\nJOIN \"OrderDetail\" od\n  ON o.Id = od.OrderId\nGROUP BY o.CustomerId\nORDER BY total_sales DESC;",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "customer_id",
+      "type": "string",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false,
+      "acceptedValues": ""
+    },
+    {
+      "name": "orders_count",
+      "type": "number",
+      "nullable": false,
+      "unique": false,
+      "description": "",
+      "testNull": false,
+      "testUnique": false,
+      "acceptedValues": ""
+    },
+    {
+      "name": "total_sales",
+      "type": "number",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false,
+      "acceptedValues": ""
+    }
+  ],
+  "preview": [
+    {
+      "customer_id": "QUICK",
+      "orders_count": 28,
+      "total_sales": 110277.305
+    },
+    {
+      "customer_id": "ERNSH",
+      "orders_count": 30,
+      "total_sales": 104874.9785
+    },
+    {
+      "customer_id": "SAVEA",
+      "orders_count": 31,
+      "total_sales": 104361.95
+    },
+    {
+      "customer_id": "RATTC",
+      "orders_count": 18,
+      "total_sales": 51097.8005
+    },
+    {
+      "customer_id": "HUNGO",
+      "orders_count": 19,
+      "total_sales": 49979.905
+    },
+    {
+      "customer_id": "HANAR",
+      "orders_count": 14,
+      "total_sales": 32841.37
+    },
+    {
+      "customer_id": "KOENE",
+      "orders_count": 14,
+      "total_sales": 30908.384
+    },
+    {
+      "customer_id": "FOLKO",
+      "orders_count": 19,
+      "total_sales": 29567.5625
+    },
+    {
+      "customer_id": "MEREP",
+      "orders_count": 13,
+      "total_sales": 28872.19
+    },
+    {
+      "customer_id": "WHITC",
+      "orders_count": 14,
+      "total_sales": 27363.605
+    },
+    {
+      "customer_id": "FRANK",
+      "orders_count": 15,
+      "total_sales": 26656.5595
+    },
+    {
+      "customer_id": "QUEE",
+      "orders_count": 13,
+      "total_sales": 25717.4975
+    },
+    {
+      "customer_id": "BERGS",
+      "orders_count": 18,
+      "total_sales": 24927.5775
+    },
+    {
+      "customer_id": "SUPRD",
+      "orders_count": 12,
+      "total_sales": 24088.78
+    },
+    {
+      "customer_id": "PICCO",
+      "orders_count": 10,
+      "total_sales": 23128.86
+    },
+    {
+      "customer_id": "HILAA",
+      "orders_count": 18,
+      "total_sales": 22768.764
+    },
+    {
+      "customer_id": "BONAP",
+      "orders_count": 17,
+      "total_sales": 21963.2525
+    },
+    {
+      "customer_id": "BOTTM",
+      "orders_count": 14,
+      "total_sales": 20801.6
+    },
+    {
+      "customer_id": "RICSU",
+      "orders_count": 10,
+      "total_sales": 19343.779000000002
+    },
+    {
+      "customer_id": "LEHMS",
+      "orders_count": 15,
+      "total_sales": 19261.41
+    },
+    {
+      "customer_id": "BLONP",
+      "orders_count": 11,
+      "total_sales": 18534.08
+    },
+    {
+      "customer_id": "GREAL",
+      "orders_count": 11,
+      "total_sales": 18507.45
+    },
+    {
+      "customer_id": "SIMOB",
+      "orders_count": 7,
+      "total_sales": 16817.0975
+    },
+    {
+      "customer_id": "LINOD",
+      "orders_count": 12,
+      "total_sales": 16476.565
+    },
+    {
+      "customer_id": "SEVES",
+      "orders_count": 9,
+      "total_sales": 16215.324999999999
+    },
+    {
+      "customer_id": "LILAS",
+      "orders_count": 14,
+      "total_sales": 16076.6
+    },
+    {
+      "customer_id": "VAFFE",
+      "orders_count": 11,
+      "total_sales": 15843.925
+    },
+    {
+      "customer_id": "WARTH",
+      "orders_count": 15,
+      "total_sales": 15648.7025
+    },
+    {
+      "customer_id": "OLDWO",
+      "orders_count": 10,
+      "total_sales": 15177.4625
+    },
+    {
+      "customer_id": "EASTC",
+      "orders_count": 8,
+      "total_sales": 14761.035
+    },
+    {
+      "customer_id": "AROUT",
+      "orders_count": 13,
+      "total_sales": 13390.65
+    },
+    {
+      "customer_id": "OTTIK",
+      "orders_count": 10,
+      "total_sales": 12496.2
+    },
+    {
+      "customer_id": "RICAR",
+      "orders_count": 11,
+      "total_sales": 12450.8
+    },
+    {
+      "customer_id": "CHOPS",
+      "orders_count": 8,
+      "total_sales": 12348.88
+    },
+    {
+      "customer_id": "FOLIG",
+      "orders_count": 5,
+      "total_sales": 11666.9
+    },
+    {
+      "customer_id": "GODOS",
+      "orders_count": 10,
+      "total_sales": 11446.36
+    },
+    {
+      "customer_id": "SPLIR",
+      "orders_count": 9,
+      "total_sales": 11441.63
+    },
+    {
+      "customer_id": "TORTU",
+      "orders_count": 10,
+      "total_sales": 10812.15
+    },
+    {
+      "customer_id": "MAISD",
+      "orders_count": 7,
+      "total_sales": 9736.075
+    },
+    {
+      "customer_id": "WANDK",
+      "orders_count": 10,
+      "total_sales": 9588.425
+    },
+    {
+      "customer_id": "LAMAI",
+      "orders_count": 14,
+      "total_sales": 9328.2
+    },
+    {
+      "customer_id": "VICTE",
+      "orders_count": 10,
+      "total_sales": 9182.43
+    },
+    {
+      "customer_id": "GOURL",
+      "orders_count": 9,
+      "total_sales": 8414.135
+    },
+    {
+      "customer_id": "MAGAA",
+      "orders_count": 10,
+      "total_sales": 7176.215
+    },
+    {
+      "customer_id": "REGGC",
+      "orders_count": 12,
+      "total_sales": 7048.24
+    },
+    {
+      "customer_id": "ANTO",
+      "orders_count": 7,
+      "total_sales": 7023.9775
+    },
+    {
+      "customer_id": "TRADH",
+      "orders_count": 6,
+      "total_sales": 6850.664
+    },
+    {
+      "customer_id": "QUEDE",
+      "orders_count": 9,
+      "total_sales": 6664.81
+    },
+    {
+      "customer_id": "FURIB",
+      "orders_count": 8,
+      "total_sales": 6427.4225
+    },
+    {
+      "customer_id": "ISLAT",
+      "orders_count": 10,
+      "total_sales": 6146.3
+    },
+    {
+      "customer_id": "BSBEV",
+      "orders_count": 10,
+      "total_sales": 6089.9
+    },
+    {
+      "customer_id": "WELLI",
+      "orders_count": 9,
+      "total_sales": 6068.2
+    },
+    {
+      "customer_id": "SANTG",
+      "orders_count": 6,
+      "total_sales": 5735.15
+    },
+    {
+      "customer_id": "PRINI",
+      "orders_count": 5,
+      "total_sales": 5044.94
+    },
+    {
+      "customer_id": "MORGK",
+      "orders_count": 5,
+      "total_sales": 5042.2
+    },
+    {
+      "customer_id": "TOMSP",
+      "orders_count": 6,
+      "total_sales": 4778.14
+    },
+    {
+      "customer_id": "ALFKI",
+      "orders_count": 6,
+      "total_sales": 4273
+    },
+    {
+      "customer_id": "LONEP",
+      "orders_count": 8,
+      "total_sales": 4258.6
+    },
+    {
+      "customer_id": "PERIC",
+      "orders_count": 6,
+      "total_sales": 4242.2
+    },
+    {
+      "customer_id": "BOLID",
+      "orders_count": 3,
+      "total_sales": 4232.85
+    },
+    {
+      "customer_id": "FAMIA",
+      "orders_count": 7,
+      "total_sales": 4107.55
+    },
+    {
+      "customer_id": "COMMI",
+      "orders_count": 5,
+      "total_sales": 3810.75
+    },
+    {
+      "customer_id": "DRACD",
+      "orders_count": 6,
+      "total_sales": 3763.21
+    },
+    {
+      "customer_id": "WOLZA",
+      "orders_count": 7,
+      "total_sales": 3531.95
+    },
+    {
+      "customer_id": "OCEA",
+      "orders_count": 5,
+      "total_sales": 3460.2
+    },
+    {
+      "customer_id": "THEBI",
+      "orders_count": 4,
+      "total_sales": 3361
+    },
+    {
+      "customer_id": "BLAUS",
+      "orders_count": 7,
+      "total_sales": 3239.8
+    },
+    {
+      "customer_id": "FRANR",
+      "orders_count": 3,
+      "total_sales": 3172.1600000000003
+    },
+    {
+      "customer_id": "WILMK",
+      "orders_count": 7,
+      "total_sales": 3161.35
+    },
+    {
+      "customer_id": "LETSS",
+      "orders_count": 4,
+      "total_sales": 3076.4725
+    },
+    {
+      "customer_id": "HUNGC",
+      "orders_count": 5,
+      "total_sales": 3063.2
+    },
+    {
+      "customer_id": "RANCH",
+      "orders_count": 5,
+      "total_sales": 2844.1
+    },
+    {
+      "customer_id": "SPECD",
+      "orders_count": 4,
+      "total_sales": 2423.35
+    },
+    {
+      "customer_id": "LACOR",
+      "orders_count": 4,
+      "total_sales": 1992.05
+    },
+    {
+      "customer_id": "THECR",
+      "orders_count": 3,
+      "total_sales": 1947.24
+    },
+    {
+      "customer_id": "CACTU",
+      "orders_count": 6,
+      "total_sales": 1814.8
+    },
+    {
+      "customer_id": "CONSH",
+      "orders_count": 3,
+      "total_sales": 1719.1000000000001
+    },
+    {
+      "customer_id": "DUMO",
+      "orders_count": 4,
+      "total_sales": 1615.9
+    },
+    {
+      "customer_id": "TRAIH",
+      "orders_count": 3,
+      "total_sales": 1571.2
+    },
+    {
+      "customer_id": "FRANS",
+      "orders_count": 6,
+      "total_sales": 1545.7
+    },
+    {
+      "customer_id": "GROSR",
+      "orders_count": 2,
+      "total_sales": 1488.7
+    },
+    {
+      "customer_id": "VINET",
+      "orders_count": 5,
+      "total_sales": 1480
+    },
+    {
+      "customer_id": "ROMEY",
+      "orders_count": 5,
+      "total_sales": 1467.29
+    },
+    {
+      "customer_id": "ANATR",
+      "orders_count": 4,
+      "total_sales": 1402.95
+    },
+    {
+      "customer_id": "GALED",
+      "orders_count": 5,
+      "total_sales": 836.7
+    },
+    {
+      "customer_id": "NORTS",
+      "orders_count": 3,
+      "total_sales": 649
+    },
+    {
+      "customer_id": "LAUGB",
+      "orders_count": 3,
+      "total_sales": 522.5
+    },
+    {
+      "customer_id": "LAZYK",
+      "orders_count": 2,
+      "total_sales": 357
+    },
+    {
+      "customer_id": "CENTC",
+      "orders_count": 1,
+      "total_sales": 100.8
+    }
+  ],
+  "chartsPath": "curated_total_sales_by_customer1_charts.html",
+  "timestamp": "2025-12-09T15:11:40.125Z"
+}

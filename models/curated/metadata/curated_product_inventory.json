@@ -1,0 +1,137 @@
+{
+  "name": "curated_product_inventory",
+  "sql": "SELECT\n    e.employee_id,\n    e.last_name,\n    e.first_name,\n    e.job_title,\n    e.city,\n    e.country\nFROM stg_employee e\nORDER BY e.last_name, e.first_name;",
+  "tableDescription": "Employee directory",
+  "documentation": [
+    {
+      "name": "employee_id",
+      "type": "number",
+      "description": "Employee ID",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "last_name",
+      "type": "string",
+      "description": "Last Name",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "first_name",
+      "type": "string",
+      "description": "First Name",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "job_title",
+      "type": "string",
+      "description": "Job Title",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "description": "City",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "description": "Country",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "preview": [
+    {
+      "employee_id": 5,
+      "last_name": "Buchanan",
+      "first_name": "Steven",
+      "job_title": "Sales Manager",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 8,
+      "last_name": "Callahan",
+      "first_name": "Laura",
+      "job_title": "Inside Sales Coordinator",
+      "City": "Seattle",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 1,
+      "last_name": "Davolio",
+      "first_name": "Nancy",
+      "job_title": "Sales Representative",
+      "City": "Seattle",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 9,
+      "last_name": "Dodsworth",
+      "first_name": "Anne",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 2,
+      "last_name": "Fuller",
+      "first_name": "Andrew",
+      "job_title": "Vice President, Sales",
+      "City": "Tacoma",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 7,
+      "last_name": "King",
+      "first_name": "Robert",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    },
+    {
+      "employee_id": 3,
+      "last_name": "Leverling",
+      "first_name": "Janet",
+      "job_title": "Sales Representative",
+      "City": "Kirkland",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 4,
+      "last_name": "Peacock",
+      "first_name": "Margaret",
+      "job_title": "Sales Representative",
+      "City": "Redmond",
+      "Country": "USA"
+    },
+    {
+      "employee_id": 6,
+      "last_name": "Suyama",
+      "first_name": "Michael",
+      "job_title": "Sales Representative",
+      "City": "London",
+      "Country": "UK"
+    }
+  ],
+  "chartsPath": "curated_product_inventory_charts.html",
+  "timestamp": "2025-12-08T16:04:34.332Z"
+}

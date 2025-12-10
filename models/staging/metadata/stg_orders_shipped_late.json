@@ -1,0 +1,270 @@
+{
+  "name": "stg_orders_shipped_late",
+  "sql": "SELECT\n  Id              AS order_id,\n  RequiredDate    AS required_date,\n  ShippedDate     AS shipped_date,\n  julianday(ShippedDate) - julianday(RequiredDate) AS days_late\nFROM \"Order\"\nWHERE ShippedDate > RequiredDate;\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "order_id",
+      "type": "number",
+      "description": "",
+      "nullable": false,
+      "unique": true,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "required_date",
+      "type": "string",
+      "description": "",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "shipped_date",
+      "type": "string",
+      "description": "",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "days_late",
+      "type": "number",
+      "description": "",
+      "nullable": false,
+      "unique": false,
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_orders_shipped_late\n    description: \"\"\n    columns:\n      - name: order_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n          - unique\n      - name: required_date\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: shipped_date\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n      - name: days_late\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null",
+  "preview": [
+    {
+      "order_id": 10264,
+      "required_date": "2012-08-21",
+      "shipped_date": "2012-08-23",
+      "days_late": 2
+    },
+    {
+      "order_id": 10271,
+      "required_date": "2012-08-29",
+      "shipped_date": "2012-08-30",
+      "days_late": 1
+    },
+    {
+      "order_id": 10280,
+      "required_date": "2012-09-11",
+      "shipped_date": "2012-09-12",
+      "days_late": 1
+    },
+    {
+      "order_id": 10302,
+      "required_date": "2012-10-08",
+      "shipped_date": "2012-10-09",
+      "days_late": 1
+    },
+    {
+      "order_id": 10309,
+      "required_date": "2012-10-17",
+      "shipped_date": "2012-10-23",
+      "days_late": 6
+    },
+    {
+      "order_id": 10320,
+      "required_date": "2012-10-17",
+      "shipped_date": "2012-10-18",
+      "days_late": 1
+    },
+    {
+      "order_id": 10380,
+      "required_date": "2013-01-09",
+      "shipped_date": "2013-01-16",
+      "days_late": 7
+    },
+    {
+      "order_id": 10423,
+      "required_date": "2013-02-06",
+      "shipped_date": "2013-02-24",
+      "days_late": 18
+    },
+    {
+      "order_id": 10427,
+      "required_date": "2013-02-24",
+      "shipped_date": "2013-03-03",
+      "days_late": 7
+    },
+    {
+      "order_id": 10433,
+      "required_date": "2013-03-03",
+      "shipped_date": "2013-03-04",
+      "days_late": 1
+    },
+    {
+      "order_id": 10451,
+      "required_date": "2013-03-05",
+      "shipped_date": "2013-03-12",
+      "days_late": 7
+    },
+    {
+      "order_id": 10483,
+      "required_date": "2013-04-21",
+      "shipped_date": "2013-04-25",
+      "days_late": 4
+    },
+    {
+      "order_id": 10515,
+      "required_date": "2013-05-07",
+      "shipped_date": "2013-05-23",
+      "days_late": 16
+    },
+    {
+      "order_id": 10523,
+      "required_date": "2013-05-29",
+      "shipped_date": "2013-05-30",
+      "days_late": 1
+    },
+    {
+      "order_id": 10545,
+      "required_date": "2013-06-19",
+      "shipped_date": "2013-06-26",
+      "days_late": 7
+    },
+    {
+      "order_id": 10578,
+      "required_date": "2013-07-22",
+      "shipped_date": "2013-07-25",
+      "days_late": 3
+    },
+    {
+      "order_id": 10593,
+      "required_date": "2013-08-06",
+      "shipped_date": "2013-08-13",
+      "days_late": 7
+    },
+    {
+      "order_id": 10596,
+      "required_date": "2013-08-08",
+      "shipped_date": "2013-08-12",
+      "days_late": 4
+    },
+    {
+      "order_id": 10660,
+      "required_date": "2013-10-06",
+      "shipped_date": "2013-10-15",
+      "days_late": 9
+    },
+    {
+      "order_id": 10663,
+      "required_date": "2013-09-24",
+      "shipped_date": "2013-10-03",
+      "days_late": 9
+    },
+    {
+      "order_id": 10687,
+      "required_date": "2013-10-28",
+      "shipped_date": "2013-10-30",
+      "days_late": 2
+    },
+    {
+      "order_id": 10705,
+      "required_date": "2013-11-12",
+      "shipped_date": "2013-11-18",
+      "days_late": 6
+    },
+    {
+      "order_id": 10709,
+      "required_date": "2013-11-14",
+      "shipped_date": "2013-11-20",
+      "days_late": 6
+    },
+    {
+      "order_id": 10726,
+      "required_date": "2013-11-17",
+      "shipped_date": "2013-12-05",
+      "days_late": 18
+    },
+    {
+      "order_id": 10727,
+      "required_date": "2013-12-01",
+      "shipped_date": "2013-12-05",
+      "days_late": 4
+    },
+    {
+      "order_id": 10749,
+      "required_date": "2013-12-18",
+      "shipped_date": "2013-12-19",
+      "days_late": 1
+    },
+    {
+      "order_id": 10777,
+      "required_date": "2013-12-29",
+      "shipped_date": "2014-01-21",
+      "days_late": 23
+    },
+    {
+      "order_id": 10779,
+      "required_date": "2014-01-13",
+      "shipped_date": "2014-01-14",
+      "days_late": 1
+    },
+    {
+      "order_id": 10807,
+      "required_date": "2014-01-28",
+      "shipped_date": "2014-01-30",
+      "days_late": 2
+    },
+    {
+      "order_id": 10816,
+      "required_date": "2014-02-03",
+      "shipped_date": "2014-02-04",
+      "days_late": 1
+    },
+    {
+      "order_id": 10827,
+      "required_date": "2014-01-26",
+      "shipped_date": "2014-02-06",
+      "days_late": 11
+    },
+    {
+      "order_id": 10828,
+      "required_date": "2014-01-27",
+      "shipped_date": "2014-02-04",
+      "days_late": 8
+    },
+    {
+      "order_id": 10847,
+      "required_date": "2014-02-05",
+      "shipped_date": "2014-02-10",
+      "days_late": 5
+    },
+    {
+      "order_id": 10924,
+      "required_date": "2014-04-01",
+      "shipped_date": "2014-04-08",
+      "days_late": 7
+    },
+    {
+      "order_id": 10927,
+      "required_date": "2014-04-02",
+      "shipped_date": "2014-04-08",
+      "days_late": 6
+    },
+    {
+      "order_id": 10960,
+      "required_date": "2014-04-02",
+      "shipped_date": "2014-04-08",
+      "days_late": 6
+    },
+    {
+      "order_id": 10970,
+      "required_date": "2014-04-07",
+      "shipped_date": "2014-04-24",
+      "days_late": 17
+    }
+  ],
+  "timestamp": "2025-07-21T11:21:21.932Z"
+}

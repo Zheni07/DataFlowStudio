@@ -1,0 +1,32 @@
+{
+  "runId": "d3a00d21-7f81-4543-9f52-3fcf3a136999",
+  "mode": "manual",
+  "curatedName": null,
+  "rowLimit": 10000,
+  "sql": "SELECT\n    e.employee_id,\n    e.last_name,\n    e.first_name,\n    e.job_title,\n    e.city,\n    e.country\nFROM stg_employee e\nORDER BY e.last_name, e.first_name;",
+  "startedAt": "2025-12-10T11:57:17.361Z",
+  "finishedAt": "2025-12-10T11:57:17.408Z",
+  "rowsProcessed": 9,
+  "reportPath": "d3a00d21-7f81-4543-9f52-3fcf3a136999.html",
+  "jsonPath": "d3a00d21-7f81-4543-9f52-3fcf3a136999.json",
+  "final": {
+    "elapsedMs": 46.0989,
+    "cpuUserMs": 0,
+    "cpuSystemMs": 0,
+    "rssMb": 48.3,
+    "rowsProcessed": 9,
+    "status": "done",
+    "ts": 1765367837407
+  },
+  "samples": [
+    {
+      "elapsedMs": 46.0989,
+      "cpuUserMs": 0,
+      "cpuSystemMs": 0,
+      "rssMb": 48.3,
+      "rowsProcessed": 9,
+      "status": "done",
+      "ts": 1765367837407
+    }
+  ]
+}

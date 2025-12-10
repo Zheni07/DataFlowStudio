@@ -1,0 +1,62 @@
+{
+  "name": "stg_categories_named",
+  "sql": "SELECT\n  Id              AS category_id,\n  CategoryName    AS category_name\nFROM Category\nWHERE CategoryName IS NOT NULL;\n",
+  "dialect": "sqlite",
+  "tableDescription": "",
+  "documentation": [
+    {
+      "name": "category_id",
+      "type": "number",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    },
+    {
+      "name": "category_name",
+      "type": "string",
+      "nullable": false,
+      "unique": true,
+      "description": "",
+      "testNull": false,
+      "testUnique": false
+    }
+  ],
+  "yaml": "version: 2\n\nmodels:\n  - name: stg_categories_named\n    description: \"\"\n    columns:\n      - name: category_id\n        description: \"\"\n        data_type: number\n        tests:\n          - not_null\n          - unique\n      - name: category_name\n        description: \"\"\n        data_type: string\n        tests:\n          - not_null\n          - unique",
+  "preview": [
+    {
+      "category_id": 1,
+      "category_name": "Beverages"
+    },
+    {
+      "category_id": 2,
+      "category_name": "Condiments"
+    },
+    {
+      "category_id": 3,
+      "category_name": "Confections"
+    },
+    {
+      "category_id": 4,
+      "category_name": "Dairy Products"
+    },
+    {
+      "category_id": 5,
+      "category_name": "Grains/Cereals"
+    },
+    {
+      "category_id": 6,
+      "category_name": "Meat/Poultry"
+    },
+    {
+      "category_id": 7,
+      "category_name": "Produce"
+    },
+    {
+      "category_id": 8,
+      "category_name": "Seafood"
+    }
+  ],
+  "timestamp": "2025-07-21T11:19:45.626Z"
+}
