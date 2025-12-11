@@ -1,0 +1,32 @@
+{
+  "runId": "4197c597-c6f4-482f-a8f7-4969848b46a8",
+  "mode": "manual",
+  "curatedName": null,
+  "rowLimit": 10000,
+  "sql": "SELECT\n    o.id AS order_id,\n    o.customer_id,\n    o.order_date,\n    o.required_date,\n    o.shipped_date,\n    o.ship_via,\n    o.freight,\n    o.ship_name,\n    o.ship_address,\n    o.ship_city,\n    o.ship_region,\n    o.ship_postal_code,\n    o.ship_country,\n    e.employee_id,\n    e.last_name,\n    e.first_name,\n    e.job_title,\n    e.city AS employee_city,\n    e.country AS employee_country\nFROM stg_employee e\nJOIN stg_order o\n  ON e.employee_id = o.employee_id;",
+  "startedAt": "2025-12-11T19:05:46.833Z",
+  "finishedAt": "2025-12-11T19:05:46.864Z",
+  "rowsProcessed": 830,
+  "reportPath": "4197c597-c6f4-482f-a8f7-4969848b46a8.html",
+  "jsonPath": "4197c597-c6f4-482f-a8f7-4969848b46a8.json",
+  "final": {
+    "elapsedMs": 30.9246,
+    "cpuUserMs": 47,
+    "cpuSystemMs": 0,
+    "rssMb": 51.7,
+    "rowsProcessed": 830,
+    "status": "done",
+    "ts": 1765479946864
+  },
+  "samples": [
+    {
+      "elapsedMs": 30.9246,
+      "cpuUserMs": 47,
+      "cpuSystemMs": 0,
+      "rssMb": 51.7,
+      "rowsProcessed": 830,
+      "status": "done",
+      "ts": 1765479946864
+    }
+  ]
+}

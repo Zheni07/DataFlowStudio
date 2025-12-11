@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance Report - d61f695a-164e-4554-b6c2-2e878537c8d4</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 32px; }
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.35); margin-bottom: 20px; }
+    h1 { margin: 0 0 10px 0; color: #cbd5e1; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .label { color: #94a3b8; font-size: 13px; }
+    .value { color: #e2e8f0; font-size: 20px; font-weight: 700; }
+    canvas { background: #0b1224; border-radius: 10px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Performance Run - manual</h1>
+    <div class="label">12/11/2025, 9:05:59 PM</div>
+    <div class="grid" style="margin-top:12px;">
+      <div><div class="label">Mode</div><div class="value">manual</div></div>
+      <div><div class="label">Elapsed (ms)</div><div class="value">18.36</div></div>
+      <div><div class="label">CPU User (ms)</div><div class="value">0.00</div></div>
+      <div><div class="label">CPU System (ms)</div><div class="value">0.00</div></div>
+      <div><div class="label">Rows Processed</div><div class="value">89</div></div>
+      <div><div class="label">Row Limit</div><div class="value">10000</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0;color:#cbd5e1;">Time / CPU Over Time</h2>
+    <canvas id="chart-time" height="220"></canvas>
+    <canvas id="chart-cpu" height="220" style="margin-top:16px;"></canvas>
+    <canvas id="chart-rss" height="180" style="margin-top:16px;"></canvas>
+  </div>
+  <script>
+    const labels = [1];
+    const elapsed = [18.3619];
+    const cpuUser = [0];
+    const cpuSys = [0];
+    const rss = [52.54];
+    const palette = ['#60a5fa','#a78bfa','#34d399'];
+    new Chart(document.getElementById('chart-time'), {
+      type: 'line',
+      data: { labels, datasets: [{ label: 'Elapsed ms', data: elapsed, borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.15)', fill: true, tension: 0.15, pointRadius: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins:{ legend:{display:true}}, scales:{ x:{ticks:{color:'#94a3b8'}}, y:{ticks:{color:'#94a3b8'}}}}
+    });
+    new Chart(document.getElementById('chart-cpu'), {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'CPU User ms', data: cpuUser, borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.15)', fill: true, tension: 0.15, pointRadius: 0 },
+        { label: 'CPU Sys ms', data: cpuSys, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.15)', fill: true, tension: 0.15, pointRadius: 0 }
+      ]},
+      options: { responsive: true, maintainAspectRatio: false, plugins:{ legend:{display:true}}, scales:{ x:{ticks:{color:'#94a3b8'}}, y:{ticks:{color:'#94a3b8'}}}}
+    });
+    new Chart(document.getElementById('chart-rss'), {
+      type: 'bar',
+      data: { labels, datasets: [{ label: 'RSS MB', data: rss, backgroundColor: '#fbbf24' }]},
+      options: { responsive: true, maintainAspectRatio: false, plugins:{ legend:{display:true}}, scales:{ x:{ticks:{color:'#94a3b8'}}, y:{ticks:{color:'#94a3b8'}}}}
+    });
+  </script>
+</body>
+</html>

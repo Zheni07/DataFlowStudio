@@ -1,0 +1,32 @@
+{
+  "runId": "2dd25fa8-e09a-461c-bdcb-1cbedac0fccf",
+  "mode": "manual",
+  "curatedName": null,
+  "rowLimit": 10000,
+  "sql": "SELECT\n  o.CustomerId AS customer_id,\n  COUNT(DISTINCT od.OrderId) AS orders_count,\n  SUM(od.UnitPrice * od.Quantity * (1 - COALESCE(od.Discount, 0))) AS total_sales\nFROM \"Order\" o\nJOIN \"OrderDetail\" od\n  ON o.Id = od.OrderId\nGROUP BY o.CustomerId\nORDER BY total_sales DESC;",
+  "startedAt": "2025-12-11T19:05:41.811Z",
+  "finishedAt": "2025-12-11T19:05:41.842Z",
+  "rowsProcessed": 89,
+  "reportPath": "2dd25fa8-e09a-461c-bdcb-1cbedac0fccf.html",
+  "jsonPath": "2dd25fa8-e09a-461c-bdcb-1cbedac0fccf.json",
+  "final": {
+    "elapsedMs": 29.3475,
+    "cpuUserMs": 16,
+    "cpuSystemMs": 0,
+    "rssMb": 48.23,
+    "rowsProcessed": 89,
+    "status": "done",
+    "ts": 1765479941841
+  },
+  "samples": [
+    {
+      "elapsedMs": 29.3475,
+      "cpuUserMs": 16,
+      "cpuSystemMs": 0,
+      "rssMb": 48.23,
+      "rowsProcessed": 89,
+      "status": "done",
+      "ts": 1765479941841
+    }
+  ]
+}
