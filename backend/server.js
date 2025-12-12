@@ -3,7 +3,6 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { generateCharts, generateHTMLReport, saveCharts } = require('./chartGenerator');
 const { randomUUID } = require('crypto');
 
 const app = express();
@@ -663,45 +662,7 @@ app.post('/curated-models', async (req, res) => {
   }
   db.close();
 
-  // Generate charts for the curated model using the full query (with a safe cap)
-  let chartsPath = null;
-  let chartsGenerated = false;
-  try {
-    // Fetch full rows for chart generation (do not rely on 100-row preview)
-    const fullDb = new sqlite3.Database(DB_PATH);
-    let fullSQL = sql.trim();
-    if (!/limit\s+\d+/i.test(fullSQL)) {
-      fullSQL = fullSQL.replace(/;*\s*$/, '') + ` LIMIT ${FULL_CHART_ROWS}`;
-    }
-    const fullRows = await new Promise((resolve, reject) => {
-      fullDb.all(fullSQL, (err, rows) => err ? reject(err) : resolve(rows));
-    }).catch(err => {
-      console.error('Full rows fetch error:', err.message);
-      return [];
-    });
-    fullDb.close();
-
-    if (fullRows.length > 0 && doc.length > 0) {
-      console.log(`Generating charts for model: ${name} using ${fullRows.length} rows (capped at ${FULL_CHART_ROWS})`);
-      const charts = generateCharts(name, fullRows, doc);
-      if (charts && charts.length > 0) {
-        console.log(`Generated ${charts.length} chart(s)`);
-        const chartsHtml = generateHTMLReport(name, fullRows, doc, charts);
-        if (chartsHtml) {
-          chartsPath = saveCharts(name, chartsHtml, CURATED_META_DIR);
-          chartsGenerated = !!chartsPath;
-          console.log(`Charts generation result: ${chartsGenerated}`);
-        }
-      } else {
-        console.log(`No charts generated for ${name}`);
-      }
-    } else {
-      console.log(`Not generating charts - fullRows.length=${fullRows.length}, doc.length=${doc.length}`);
-    }
-  } catch (chartErr) {
-    console.error('Chart generation error:', chartErr.message);
-    // Continue even if chart generation fails
-  }
+  // Chart generation removed
 
   // Save metadata
   const meta = {
@@ -710,11 +671,10 @@ app.post('/curated-models', async (req, res) => {
     tableDescription: tableDescription || '',
     documentation: doc,
     preview,
-    chartsPath: chartsPath ? path.relative(CURATED_META_DIR, chartsPath) : null,
     timestamp: new Date().toISOString()
   };
   fs.writeFileSync(path.join(CURATED_META_DIR, `${name}.json`), JSON.stringify(meta, null, 2));
-  res.json({ success: true, file: filePath, chartsGenerated, chartsPath, meta });
+  res.json({ success: true, file: filePath, meta });
 });
 
 // Preview custom curated SQL (returns up to 100 rows and docs)
@@ -755,21 +715,7 @@ app.post('/api/curated-preview', async (req, res) => {
   }
 });
 
-// Serve curated model charts
-app.get('/curated-model/:name/charts', (req, res) => {
-  const chartsPath = path.join(CURATED_META_DIR, `${req.params.name}_charts.html`);
-  console.log(`Charts request for: ${req.params.name}`);
-  console.log(`Looking for charts at: ${chartsPath}`);
-  
-  fs.readFile(chartsPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error(`Charts not found: ${err.message}`);
-      return res.status(404).json({ error: 'Charts not found', path: chartsPath });
-    }
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.send(data);
-  });
-});
+
 
 // Serve curated model metadata with charts path
 app.get('/curated-model/:name', (req, res) => {
@@ -780,63 +726,7 @@ app.get('/curated-model/:name', (req, res) => {
   });
 });
 
-// Regenerate charts for a curated model
-app.post('/curated-model/:name/regenerate-charts', async (req, res) => {
-  const name = req.params.name;
-  const metaPath = path.join(CURATED_META_DIR, `${name}.json`);
-  
-  try {
-    const metaData = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-    const sql = metaData.sql || '';
-    const doc = metaData.documentation || [];
-    let fullRows = [];
-    
-    console.log(`Regenerating charts for: ${name}`);
-    
-    if (sql && doc.length > 0) {
-      const db = new sqlite3.Database(DB_PATH);
-      try {
-        let fullSQL = sql.trim();
-        if (!/limit\s+\d+/i.test(fullSQL)) {
-          fullSQL = fullSQL.replace(/;*\s*$/, '') + ` LIMIT ${FULL_CHART_ROWS}`;
-        }
-        fullRows = await new Promise((resolve, reject) => {
-          db.all(fullSQL, (err, rows) => err ? reject(err) : resolve(rows));
-        }).catch(err => {
-          console.error(`Error fetching full rows for regeneration: ${err.message}`);
-          return [];
-        });
-      } finally {
-        try { db.close(); } catch (e) {}
-      }
-    }
-    
-    if (fullRows.length > 0 && doc.length > 0) {
-      const charts = generateCharts(name, fullRows, doc);
-      if (charts && charts.length > 0) {
-        const chartsHtml = generateHTMLReport(name, fullRows, doc, charts);
-        if (chartsHtml) {
-          const chartsPath = saveCharts(name, chartsHtml, CURATED_META_DIR);
-          
-          // Update metadata with charts path
-          metaData.chartsPath = chartsPath ? path.basename(chartsPath) : null;
-          fs.writeFileSync(metaPath, JSON.stringify(metaData, null, 2));
-          
-          res.json({ success: true, chartsGenerated: true, chartsPath });
-        } else {
-          res.status(500).json({ error: 'Failed to generate HTML' });
-        }
-      } else {
-        res.status(400).json({ error: 'No charts could be generated for this data' });
-      }
-    } else {
-      res.status(400).json({ error: 'No preview data or documentation available' });
-    }
-  } catch (err) {
-    console.error(`Error regenerating charts: ${err.message}`);
-    res.status(500).json({ error: err.message });
-  }
-});
+
 
 // Fetch curated model data rows (for table view)
 app.get('/curated-model/:name/data', async (req, res) => {

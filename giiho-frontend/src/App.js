@@ -1350,17 +1350,6 @@ function CuratedModel({ curatedModels, setCuratedModels, selectedCurated, setSel
                 {isSaving ? 'Saving...' : 'Save Curated Model'}
               </button>
               <button
-                onClick={() => {
-                  if (selectedCurated) {
-                    window.open(`http://localhost:4000/curated-model/${selectedCurated}/charts`, '_blank');
-                  }
-                }}
-                disabled={!selectedCurated}
-                style={{ padding: '10px 24px', fontSize: 16, background: '#667eea', color: '#fff', border: 'none', borderRadius: 6, cursor: !selectedCurated ? 'not-allowed' : 'pointer', fontWeight: 600, marginRight: 16 }}
-              >
-                View Charts
-              </button>
-              <button
                 onClick={() => handleDownload('csv')}
                 disabled={!selectedCurated}
                 style={{
