@@ -1,9 +1,9 @@
 SELECT
-  o.customer_id,
-  COUNT(DISTINCT od.order_id) AS orders_count,
-  SUM(od.unit_price * od.quantity * (1 - COALESCE(od.discount, 0))) AS total_sales
-FROM stg_order o
-JOIN stg_order_detail od
-  ON o.id = od.order_id
-GROUP BY o.customer_id
+  o.CustomerId AS customer_id,
+  COUNT(DISTINCT od.OrderId) AS orders_count,
+  SUM(od.UnitPrice * od.Quantity * (1 - COALESCE(od.Discount, 0))) AS total_sales
+FROM "Order" o
+JOIN "OrderDetail" od
+  ON o.Id = od.OrderId
+GROUP BY o.CustomerId
 ORDER BY total_sales DESC;

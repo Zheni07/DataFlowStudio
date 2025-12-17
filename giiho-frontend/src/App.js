@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -568,10 +568,11 @@ function SidebarNavWrapper(props) {
   return <SidebarNav {...props} navigate={navigate} />;
 }
 
-function SidebarNav({ tables, selectedTable, setSelectedTable, sidebarStagings, curatedModels, setSelectedCurated, selectedCurated, navigate }) {
+function SidebarNav({ tables, selectedTable, setSelectedTable, sidebarStagings, curatedModels, setSelectedCurated, selectedCurated, martsModels, setSelectedMart, selectedMart, navigate }) {
   // Single-select accordion state
-  const [openSection, setOpenSection] = useState(null); // 'tables' | 'staging' | 'curated' | null
+  const [openSection, setOpenSection] = useState(null); // 'tables' | 'staging' | 'curated' | 'marts' | null
   const [showCuratedPanel, setShowCuratedPanel] = useState(false);
+  const [showMartsPanel, setShowMartsPanel] = useState(false);
 
   // Effect: When switching to 'staging', clear selected table
   React.useEffect(() => {
@@ -937,13 +938,95 @@ function SidebarNav({ tables, selectedTable, setSelectedTable, sidebarStagings, 
                 >
                   Curated Model
                 </button>
+              </ul>
+            </div>
+          )}
+          {/* Marts Accordion Button */}
+          <button
+            onClick={() => setOpenSection(openSection === 'marts' ? null : 'marts')}
+            style={{
+              background: 'linear-gradient(90deg, #00b887 0%, #36f 100%)',
+              borderRadius: 8,
+              boxShadow: '0 1.5px 6px #0001',
+              padding: '10px 0',
+              margin: 0,
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              userSelect: 'none',
+              justifyContent: 'center',
+              gap: 8,
+              border: '1.5px solid #00b887',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 16,
+              letterSpacing: 1,
+              textShadow: '0 1px 4px #0001',
+              transition: 'box-shadow 0.2s, border 0.2s',
+              minWidth: 0,
+            }}
+          >
+            Marts
+            <span style={{ marginLeft: 8 }}>{openSection === 'marts' ? '▲' : '▼'}</span>
+          </button>
+          {openSection === 'marts' && (
+            <div style={{ marginTop: -8, marginBottom: 12, paddingLeft: 8 }}>
+              <div style={{ color: '#8f9bb3', fontSize: 13, marginBottom: 4, marginLeft: 2 }}>Mart Models</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {martsModels.length === 0 && (
+                  <li style={{ color: '#8f9bb3', fontSize: 13, padding: '6px 10px' }}>No mart models.</li>
+                )}
+                {martsModels.map(name => (
+                  <li key={name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8, color: '#fff', textDecoration: 'none',
+                        background: selectedMart === name ? '#232f45' : 'transparent', borderRadius: 6, padding: '10px 0', fontSize: 14, fontWeight: 500,
+                        transition: 'background 0.15s', width: '100%', margin: 0, border: 'none', cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        setSelectedMart(name);
+                        setSelectedTable('');
+                        navigate('/app/marts');
+                      }}
+                    >
+                      {name}
+                    </button>
+                  </li>
+                ))}
+                {/* New Mart Model Button */}
                 <button
-                  onClick={() => navigate('/app/perf')}
+                  onClick={() => {
+                    setSelectedMart('');
+                    setSelectedTable('');
+                    navigate('/app/marts');
+                  }}
+                  style={{
+                    marginTop: 10,
+                    background: '#00b887',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 6,
+                    padding: '10px 0',
+                    fontWeight: 600,
+                    fontSize: 15,
+                    cursor: 'pointer',
+                    width: '100%',
+                    boxShadow: '0 1px 4px #0002',
+                    transition: 'background 0.2s',
+                  }}
+                >
+                  + New Mart Model
+                </button>
+                <button
+                  onClick={() => setShowMartsPanel(true)}
                   style={{
                     marginTop: 8,
-                    background: '#1e293b',
-                    color: '#e2e8f0',
-                    border: '1px solid #334155',
+                    background: 'linear-gradient(90deg, #00b887 0%, #36f 100%)',
+                    color: '#fff',
+                    border: '1px solid #00b887',
                     borderRadius: 6,
                     padding: '10px 0',
                     fontWeight: 600,
@@ -953,13 +1036,40 @@ function SidebarNav({ tables, selectedTable, setSelectedTable, sidebarStagings, 
                     boxShadow: '0 1px 4px #0003',
                     transition: 'background 0.2s, transform 0.1s',
                   }}
-                  title="Open performance comparison panel"
+                  title="Open mart models panel"
                 >
-                  Performance Compare
+                  Marts model
                 </button>
               </ul>
             </div>
           )}
+          <button
+            onClick={() => navigate('/app/compare')}
+            style={{
+              marginTop: 4,
+              background: 'linear-gradient(90deg, #0ea5e9 0%, #6366f1 100%)',
+              borderRadius: 8,
+              boxShadow: '0 1.5px 6px #0001',
+              padding: '10px 0',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              border: '1.5px solid #1d4ed8',
+              cursor: 'pointer',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: 16,
+              letterSpacing: 1,
+              textShadow: '0 1px 4px #0001',
+              transition: 'box-shadow 0.2s, border 0.2s',
+              minWidth: 0,
+            }}
+            title="Compare raw data queries against mart results"
+          >
+            Performance Compare
+          </button>
         </div>
       </div>
       {showCuratedPanel && (
@@ -993,6 +1103,48 @@ function SidebarNav({ tables, selectedTable, setSelectedTable, sidebarStagings, 
                         setSelectedTable('');
                         setShowCuratedPanel(false);
                         navigate('/app/curated', { state: { loadCuratedData: true, fullData: true } });
+                      }}
+                    >
+                      {name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+      {showMartsPanel && (
+        <div style={{ position: 'fixed', top: 0, left: 220, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: '#f7fafc', borderRadius: 10, width: '520px', maxHeight: '80vh', boxShadow: '0 12px 40px rgba(0,0,0,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '16px 18px', background: '#222b45', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 700, letterSpacing: 0.5 }}>Mart Models</div>
+              <button onClick={() => setShowMartsPanel(false)} style={{ background: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 18 }}>✕</button>
+            </div>
+            <div style={{ padding: '14px 18px', overflowY: 'auto' }}>
+              {martsModels.length === 0 && <div style={{ color: '#8f9bb3', fontSize: 14 }}>No mart models available.</div>}
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {martsModels.map(name => (
+                  <li key={name}>
+                    <button
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        background: selectedMart === name ? '#e0f2fe' : '#fff',
+                        color: '#111827',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 6,
+                        padding: '10px 12px',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+                        transition: 'background 0.15s, border 0.15s',
+                      }}
+                      onClick={() => {
+                        setSelectedMart(name);
+                        setSelectedTable('');
+                        setShowMartsPanel(false);
+                        navigate('/app/marts', { state: { loadMartData: true, fullData: true } });
                       }}
                     >
                       {name}
@@ -1184,6 +1336,12 @@ function CuratedModel({ curatedModels, setCuratedModels, selectedCurated, setSel
         setSelectedCurated(modelName);
         // Refresh curated models in sidebar
         fetch("http://localhost:4000/curated-models").then(res => res.json()).then(data => setCuratedModels(data.models || []));
+        // Refresh tables so curated tables become queryable by marts layer
+        fetch("http://localhost:4000/tables").then(res => res.json()).then(tableList => {
+          if (typeof window !== 'undefined' && window.setTables) {
+            window.setTables(tableList);
+          }
+        });
       } else {
         setSaveStatus(data.error || "Failed to save curated model.");
       }
@@ -1407,6 +1565,597 @@ function CuratedModel({ curatedModels, setCuratedModels, selectedCurated, setSel
                 </div>
               </div>
             )}
+            {isLoadingData && <div style={{ marginTop: 12, color: '#666' }}>Loading saved mart table…</div>}
+            {dataError && <div style={{ color: 'red', marginTop: 12 }}>{dataError}</div>}
+            {dataRows.length > 0 && (
+              <div style={{ marginTop: 20, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <div style={{ color: '#00b887', fontWeight: 700 }}>Saved mart table ({dataRows.length} rows)</div>
+                  <button
+                    onClick={() => handleLoadCuratedData(true)}
+                    disabled={isLoadingData}
+                    style={{ padding: '8px 14px', fontSize: 13, background: '#4b5563', color: '#fff', border: 'none', borderRadius: 6, cursor: isLoadingData ? 'not-allowed' : 'pointer', fontWeight: 600 }}
+                    title="Reload all rows"
+                  >
+                    Reload All
+                  </button>
+                </div>
+                <div style={{ overflow: 'auto', maxHeight: 500 }}>
+                  <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13 }}>
+                    <thead>
+                      <tr>
+                        {Object.keys(dataRows[0] || {}).map(key => (
+                          <th key={key} style={{ background: '#f7fafc', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #e4e9f2', position: 'sticky', top: 0, fontWeight: 600 }}>{key}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataRows.map((row, idx) => (
+                        <tr key={idx} style={{ background: idx % 2 === 0 ? '#f7fafc' : '#fff', height: 28 }}>
+                          {Object.values(row).map((val, i) => (
+                            <td key={i} style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2', color: '#333', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{String(val)}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Right: Documentation Panel */}
+          <div style={{ flex: 1.5, minWidth: 420, background: '#f7fafc', borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: 0, marginLeft: 0, display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div style={{ padding: 18, display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <h3 style={{ marginTop: 0 }}>Documentation</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+                {/* Table Description at the top */}
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontWeight: 600, fontSize: 14 }}>Table Description</label>
+                  <textarea
+                    value={tableDescription}
+                    onChange={e => setTableDescription(e.target.value)}
+                    placeholder="Short description of the table..."
+                    style={{ width: '100%', minHeight: 96, fontSize: 15, padding: 10, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}
+                  />
+                </div>
+                {/* Columns Table (scrollable, fills available space) */}
+                <div style={{ flex: 1, overflowY: 'auto', marginBottom: 0, minHeight: 0 }}>
+                  {documentation.length > 0 ? (
+                    <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13, marginBottom: 0 }}>
+                      <thead>
+                        <tr>
+                          <th style={{ background: '#e4e9f2', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #c5cee0', fontWeight: 600 }}>Column Name</th>
+                          <th style={{ background: '#e4e9f2', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #c5cee0', fontWeight: 600 }}>Type</th>
+                          <th style={{ background: '#e4e9f2', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #c5cee0', fontWeight: 600 }}>Description</th>
+                          <th style={{ background: '#e4e9f2', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #c5cee0', fontWeight: 600 }}>Test</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {documentation.map((col, idx) => (
+                          <tr key={col.name + idx}>
+                            <td style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2' }}>{col.name || col.source || col.original}</td>
+                            <td style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2' }}>{col.type}</td>
+                            <td style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2' }}>
+                              <textarea
+                                value={col.description || ""}
+                                onChange={e => setDocumentation(prev => prev.map((c, i) => i === idx ? { ...c, description: e.target.value } : c))}
+                                placeholder="Description..."
+                                style={{ width: '100%', fontSize: 14, padding: 6, borderRadius: 4, border: '1px solid #ccc', minHeight: 48, resize: 'vertical' }}
+                              />
+                            </td>
+                            <td style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2', minWidth: 120 }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!col.testNull}
+                                    onChange={() => handleTestCheckboxChange(idx, 'testNull')}
+                                  />
+                                  NULL
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13 }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!col.testUnique}
+                                    onChange={() => handleTestCheckboxChange(idx, 'testUnique')}
+                                  />
+                                  Unique
+                                </label>
+                                {col.nullWarning && <div style={{ color: 'red', fontSize: 12, marginTop: 2 }}>{col.nullWarning}</div>}
+                                {col.uniqueWarning && <div style={{ color: 'red', fontSize: 12, marginTop: 2 }}>{col.uniqueWarning}</div>}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div style={{ color: '#8f9bb3', fontSize: 14 }}>No documentation generated yet. Click Preview to generate.</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// MartModel component for marts layer (uses curated tables)
+function MartModel({ martsModels, setMartsModels, selectedMart, setSelectedMart }) {
+  const location = useLocation();
+  const [modelName, setModelName] = React.useState("");
+  const [sqlInput, setSqlInput] = React.useState("");
+  const [previewRows, setPreviewRows] = React.useState([]);
+  const [previewError, setPreviewError] = React.useState("");
+  const [saveStatus, setSaveStatus] = React.useState("");
+  const [isPreviewing, setIsPreviewing] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [documentation, setDocumentation] = React.useState([]);
+  const [tableDescription, setTableDescription] = React.useState("");
+  const [dataRows, setDataRows] = React.useState([]);
+  const [dataError, setDataError] = React.useState("");
+  const [isLoadingData, setIsLoadingData] = React.useState(false);
+  const [showChart, setShowChart] = React.useState(false);
+
+  // Load a selected mart model
+  React.useEffect(() => {
+    if (!selectedMart) {
+      setModelName("");
+      setSqlInput("");
+      setPreviewRows([]);
+      setDocumentation([]);
+      setTableDescription("");
+      setPreviewError("");
+      setSaveStatus("");
+      return;
+    }
+    fetch(`http://localhost:4000/mart/${selectedMart}`)
+      .then(res => res.json())
+      .then(data => {
+        setModelName(data.name);
+        setSqlInput(data.sql);
+        setPreviewRows(data.preview || []);
+        setDocumentation((data.documentation || []).map(col => ({
+          ...col,
+          testNull: !!col.testNull,
+          testUnique: !!col.testUnique,
+          nullWarning: "",
+          uniqueWarning: ""
+        })));
+        setTableDescription(data.tableDescription || "");
+        setPreviewError("");
+        setSaveStatus("");
+      })
+      .catch(err => {
+        setPreviewError("Failed to load mart model: " + err.message);
+      });
+  }, [selectedMart]);
+
+  // Preview logic
+  const handlePreview = async () => {
+    setPreviewError("");
+    setPreviewRows([]);
+    setDocumentation([]);
+    setIsPreviewing(true);
+    try {
+      const res = await fetch("http://localhost:4000/api/mart-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sql: sqlInput })
+      });
+      const data = await res.json();
+      if (data.error) {
+        setPreviewError(data.error);
+      } else {
+        setPreviewRows(data.preview);
+        if (data.columns && data.columns.length > 0) {
+          setDocumentation(data.columns.map(col => ({
+            ...col,
+            description: "",
+            testNull: false,
+            testUnique: false,
+            nullWarning: "",
+            uniqueWarning: "",
+            acceptedValues: ""
+          })));
+        } else {
+          setDocumentation([]);
+        }
+      }
+    } catch (err) {
+      setPreviewError("Failed to preview: " + err.message);
+    }
+    setIsPreviewing(false);
+  };
+
+  // Documentation test logic
+  const handleTestCheckboxChange = (idx, field) => {
+    setDocumentation(prev => {
+      return prev.map((col, i) => {
+        if (i !== idx) return col;
+        const updatedCol = { ...col, [field]: !col[field] };
+        const colName = updatedCol.name || updatedCol.source || updatedCol.original;
+        let nullWarning = updatedCol.nullWarning;
+        let uniqueWarning = updatedCol.uniqueWarning;
+        if (field === 'testNull') {
+          if (!updatedCol.testNull) {
+            nullWarning = "";
+          } else {
+            const hasNull = previewRows.some(
+              row => row[colName] === null || row[colName] === undefined || row[colName] === ""
+            );
+            nullWarning = hasNull ? `Warning: NULL values found in column ${colName}.` : "";
+          }
+        }
+        if (field === 'testUnique') {
+          if (!updatedCol.testUnique) {
+            uniqueWarning = "";
+          } else {
+            const values = previewRows.map(row => row[colName]);
+            const unique = new Set(values.filter(v => v !== null && v !== undefined && v !== ""));
+            uniqueWarning = unique.size < values.filter(v => v !== null && v !== undefined && v !== "").length ? `Warning: Duplicate values found in column ${colName}.` : "";
+          }
+        }
+        return { ...updatedCol, nullWarning, uniqueWarning };
+      });
+    });
+  };
+
+  // When previewRows changes, rerun tests for all columns with checked tests
+  React.useEffect(() => {
+    if (previewRows.length > 0 && documentation.length > 0) {
+      setDocumentation(prevDocs => prevDocs.map(col => {
+        const colName = col.name || col.source || col.original;
+        let nullWarning = col.nullWarning;
+        let uniqueWarning = col.uniqueWarning;
+        if (col.testNull) {
+          const hasNull = previewRows.some(
+            row => row[colName] === null || row[colName] === undefined || row[colName] === ""
+          );
+          nullWarning = hasNull ? `Warning: NULL values found in column ${colName}.` : "";
+        } else {
+          nullWarning = "";
+        }
+        if (col.testUnique) {
+          const values = previewRows.map(row => row[colName]);
+          const unique = new Set(values.filter(v => v !== null && v !== undefined && v !== ""));
+          uniqueWarning = unique.size < values.filter(v => v !== null && v !== undefined && v !== "").length ? `Warning: Duplicate values found in column ${colName}.` : "";
+        } else {
+          uniqueWarning = "";
+        }
+        return { ...col, nullWarning, uniqueWarning };
+      }));
+    }
+    // eslint-disable-next-line
+  }, [previewRows]);
+
+  // Save logic
+  const handleSave = async () => {
+    setSaveStatus("");
+    setIsSaving(true);
+    try {
+      const res = await fetch("http://localhost:4000/marts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: modelName,
+          sql: sqlInput,
+          documentation: documentation.map(col => ({
+            ...col,
+            nullWarning: undefined,
+            uniqueWarning: undefined
+          })),
+          tableDescription,
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSaveStatus("Mart model saved successfully!");
+        setSelectedMart(modelName);
+        // Refresh marts models in sidebar
+        fetch("http://localhost:4000/marts").then(res => res.json()).then(data => setMartsModels(data.models || []));
+      } else {
+        setSaveStatus(data.error || "Failed to save mart model.");
+      }
+    } catch (err) {
+      setSaveStatus("Failed to save mart model: " + err.message);
+    }
+    setIsSaving(false);
+  };
+
+  // Download export logic
+  const handleDownload = async (format = 'csv') => {
+    if (!selectedMart) {
+      setSaveStatus("Please select a mart model first.");
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:4000/mart/${selectedMart}/export?format=${format}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        setSaveStatus(errorData.error || "Failed to download data.");
+        return;
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedMart}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setSaveStatus("Data downloaded successfully!");
+    } catch (err) {
+      setSaveStatus("Failed to download data: " + err.message);
+    }
+  };
+
+  // Load mart model full data (table view style)
+  const handleLoadMartData = async (fullData = false) => {
+    if (!selectedMart) {
+      setSaveStatus("Please select a mart model first.");
+      return;
+    }
+    setIsLoadingData(true);
+    setDataError("");
+    try {
+      const limitParam = fullData ? 'all' : '1000';
+      const res = await fetch(`http://localhost:4000/mart/${selectedMart}/data?limit=${limitParam}`);
+      const data = await res.json();
+      if (data.error) {
+        setDataError(data.error);
+        setDataRows([]);
+      } else {
+        setDataRows(data.rows || []);
+      }
+    } catch (err) {
+      setDataError("Failed to load mart data: " + err.message);
+      setDataRows([]);
+    }
+    setIsLoadingData(false);
+  };
+
+  // When navigated with loadMartData flag, auto-load data table
+  React.useEffect(() => {
+    if (location.state && location.state.loadMartData) {
+      const wantFull = !!location.state.fullData;
+      handleLoadMartData(wantFull);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, selectedMart]);
+
+  // Reset chart toggle when dataset changes or mart changes
+  React.useEffect(() => {
+    setShowChart(false);
+  }, [selectedMart, dataRows.length]);
+
+  const chartData = useMemo(() => {
+    if (!dataRows || dataRows.length === 0) return null;
+    const first = dataRows[0] || {};
+    const keys = Object.keys(first);
+    if (keys.length === 0) return null;
+    const numericKeys = keys.filter(k => dataRows.some(r => Number.isFinite(Number(r[k]))));
+    const yKey = numericKeys[0];
+    if (!yKey) return null;
+    const xKey = keys.find(k => k !== yKey) || yKey;
+    const rows = dataRows.slice(0, 20).map(r => ({
+      x: r[xKey],
+      y: Number(r[yKey]) || 0
+    }));
+    const max = Math.max(...rows.map(r => r.y), 1);
+    return { xKey, yKey, rows, max };
+  }, [dataRows]);
+
+  const showTableOnly = (location.state && location.state.loadMartData && dataRows.length > 0) || false;
+
+  if (showTableOnly) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#f4f6fa', padding: 0 }}>
+        <h1 style={{ padding: '40px 0 0 40px' }}>Mart Model Data</h1>
+        <div style={{ padding: 40, maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+            <button
+              onClick={() => handleLoadMartData(false)}
+              disabled={isLoadingData}
+              style={{ padding: '10px 18px', fontSize: 15, background: '#0ea5e9', color: '#fff', border: 'none', borderRadius: 6, cursor: isLoadingData ? 'not-allowed' : 'pointer', fontWeight: 600 }}
+              title="Load up to 1000 rows of the saved mart table"
+            >
+              View Data (1k)
+            </button>
+            <button
+              onClick={() => handleLoadMartData(true)}
+              disabled={isLoadingData}
+              style={{ padding: '10px 18px', fontSize: 15, background: '#0284c7', color: '#fff', border: 'none', borderRadius: 6, cursor: isLoadingData ? 'not-allowed' : 'pointer', fontWeight: 600 }}
+              title="Load all rows of the saved mart table"
+            >
+              View All Data
+            </button>
+            <button
+              onClick={() => setShowChart(s => !s)}
+              disabled={!chartData || isLoadingData}
+              style={{ padding: '10px 16px', fontSize: 14, background: chartData ? '#10b981' : '#9ca3af', color: '#fff', border: 'none', borderRadius: 6, cursor: !chartData ? 'not-allowed' : 'pointer', fontWeight: 600 }}
+              title={chartData ? 'Toggle chart view' : 'Chart unavailable (no numeric column)'}
+            >
+              {showChart ? 'Hide Chart' : 'Show Chart'}
+            </button>
+          </div>
+          {dataError && <div style={{ color: 'red', marginBottom: 16 }}>{dataError}</div>}
+          {isLoadingData && <div style={{ marginBottom: 16, color: '#666' }}>Loading...</div>}
+          {dataRows.length > 0 && (
+            <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ color: '#00b887', fontWeight: 700 }}>Showing mart table ({dataRows.length} rows)</div>
+                <button
+                  onClick={() => handleLoadMartData(true)}
+                  style={{ padding: '8px 14px', fontSize: 14, background: '#4b5563', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}
+                  disabled={isLoadingData}
+                  title="Reload full mart table"
+                >
+                  Reload full table
+                </button>
+              </div>
+              {chartData && (
+                <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => setShowChart(s => !s)}
+                    style={{ padding: '8px 12px', fontSize: 13, background: '#10b981', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}
+                    title="Toggle chart view"
+                  >
+                    {showChart ? 'Hide Chart' : 'Show Chart'}
+                  </button>
+                </div>
+              )}
+              {showChart && chartData && (
+                <div style={{ marginBottom: 14, background: '#f8fafc', border: '1px solid #e4e9f2', borderRadius: 8, padding: 12 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+                    Bar chart: {chartData.yKey} by {chartData.xKey} (top {chartData.rows.length})
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {chartData.rows.map((r, idx) => (
+                      <div key={idx} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 60px', alignItems: 'center', gap: 8 }}>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#111827', fontSize: 13 }}>{String(r.x)}</div>
+                        <div style={{ height: 12, background: '#e5e7eb', borderRadius: 6, position: 'relative' }}>
+                          <div style={{ width: `${Math.max(4, (r.y / chartData.max) * 100)}%`, maxWidth: '100%', height: '100%', background: '#0ea5e9', borderRadius: 6 }} />
+                        </div>
+                        <div style={{ fontSize: 12, color: '#334155' }}>{r.y}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div style={{ overflow: 'auto', maxHeight: 650 }}>
+                <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13 }}>
+                  <thead>
+                    <tr>
+                      {Object.keys(dataRows[0] || {}).map(key => (
+                        <th key={key} style={{ background: '#f7fafc', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #e4e9f2', position: 'sticky', top: 0, fontWeight: 600 }}>{key}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataRows.map((row, idx) => (
+                      <tr key={idx} style={{ background: idx % 2 === 0 ? '#f7fafc' : '#fff', height: 28 }}>
+                        {Object.values(row).map((val, i) => (
+                          <td key={i} style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2', color: '#333', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{String(val)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {!dataRows.length && !isLoadingData && (
+            <div style={{ color: '#8f9bb3', fontSize: 14 }}>No data available.</div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // UI
+  return (
+    <div style={{ minHeight: '100vh', background: '#f4f6fa', padding: 0 }}>
+      <h1 style={{ padding: '40px 0 0 40px' }}>Mart Model Definition</h1>
+      <div style={{ padding: 40, maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32 }}>
+          {/* Left: SQL Editor and Preview */}
+          <div style={{ flex: 2, minWidth: 0, height: '100%' }}>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontWeight: 600 }}>Mart Model Name</label><br />
+              <input
+                type="text"
+                value={modelName}
+                onChange={e => setModelName(e.target.value)}
+                placeholder="e.g. mart_customer_analytics"
+                style={{ width: 400, fontSize: 16, padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}
+              />
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontWeight: 600 }}>SQL Query (use curated tables)</label><br />
+              <textarea
+                value={sqlInput}
+                onChange={e => setSqlInput(e.target.value)}
+                placeholder={"Write your SQL for the mart model here.\nExample: SELECT customer_id, SUM(total_sales) AS lifetime_value FROM curated_total_sales_by_customer GROUP BY customer_id;"}
+                style={{ width: '100%', minHeight: 120, fontSize: 15, padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}
+              />
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <button
+                onClick={handlePreview}
+                disabled={!sqlInput.trim() || isPreviewing}
+                style={{ padding: '10px 24px', fontSize: 16, background: '#36f', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, marginRight: 16 }}
+              >
+                {isPreviewing ? 'Previewing...' : 'Preview'}
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={!modelName.trim() || !sqlInput.trim() || isSaving}
+                style={{ padding: '10px 24px', fontSize: 16, background: '#00b887', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, marginRight: 16 }}
+              >
+                {isSaving ? 'Saving...' : 'Save Mart Model'}
+              </button>
+              <button
+                onClick={() => handleDownload('csv')}
+                disabled={!selectedMart}
+                style={{
+                  padding: '10px 24px',
+                  fontSize: 16,
+                  background: selectedMart ? 'linear-gradient(90deg, #4b5563 0%, #1f2937 100%)' : '#94a3b8',
+                  color: '#e5e7eb',
+                  border: '1px solid #1f2937',
+                  borderRadius: 8,
+                  cursor: !selectedMart ? 'not-allowed' : 'pointer',
+                  fontWeight: 650,
+                  marginRight: 16,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                  transition: 'transform 0.08s ease, box-shadow 0.12s ease',
+                }}
+                onMouseEnter={e => {
+                  if (selectedMart) {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 3px 10px rgba(0,0,0,0.22)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.18)';
+                }}
+                title="Download all query results as CSV file"
+              >
+                📥 Download Data
+              </button>
+              {saveStatus && <span style={{ marginLeft: 18, color: saveStatus.includes('success') ? '#00b887' : 'red', fontWeight: 600 }}>{saveStatus}</span>}
+            </div>
+            {previewError && <div style={{ color: 'red', marginBottom: 16 }}>{previewError}</div>}
+            {previewRows.length > 0 && (
+              <div style={{ marginTop: 24, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: 10 }}>
+                <h3 style={{ marginTop: 0 }}>Preview Result (up to 100 rows)</h3>
+                <div style={{ overflow: 'auto', maxHeight: 400 }}>
+                  <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13 }}>
+                    <thead>
+                      <tr>
+                        {Object.keys(previewRows[0]).map(key => (
+                          <th key={key} style={{ background: '#f7fafc', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #e4e9f2', position: 'sticky', top: 0, fontWeight: 600 }}>{key}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewRows.map((row, idx) => (
+                        <tr key={idx} style={{ background: idx % 2 === 0 ? '#f7fafc' : '#fff', height: 28 }}>
+                          {Object.values(row).map((val, i) => (
+                            <td key={i} style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2', color: '#333', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{String(val)}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
             {dataError && <div style={{ color: 'red', marginTop: 16 }}>{dataError}</div>}
           </div>
           {/* Right: Documentation Panel */}
@@ -1488,214 +2237,181 @@ function CuratedModel({ curatedModels, setCuratedModels, selectedCurated, setSel
   );
 }
 
-// Lightweight sparkline SVG for live metrics
-function Sparkline({ samples, field, width = 360, height = 90, color = '#60a5fa' }) {
-  if (!samples || samples.length === 0) {
-    return <div style={{ color: '#8f9bb3', fontSize: 12 }}>No data yet</div>;
-  }
-  const values = samples.map(s => s[field] || 0);
-  const max = Math.max(...values) || 1;
-  const min = Math.min(...values);
-  const norm = values.map((v, idx) => {
-    const x = (idx / Math.max(values.length - 1, 1)) * width;
-    const y = height - ((v - min) / (max - min || 1)) * height;
-    return `${x},${y}`;
-  }).join(' ');
-  return (
-    <svg width={width} height={height} style={{ background: '#0b1224', borderRadius: 8 }}>
-      <polyline
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        points={norm}
-      />
-    </svg>
-  );
-}
+// Performance comparison between raw SQL (source tables) and mart query
+function PerformanceCompare({ martsModels, selectedMart, setSelectedMart }) {
+  const [rawSql, setRawSql] = React.useState("");
+  const [rowLimit, setRowLimit] = React.useState(500);
+  const [rawRows, setRawRows] = React.useState([]);
+  const [martRows, setMartRows] = React.useState([]);
+  const [rawDuration, setRawDuration] = React.useState(null);
+  const [martDuration, setMartDuration] = React.useState(null);
+  const [error, setError] = React.useState("");
+  const [isRunning, setIsRunning] = React.useState(false);
+  const [loadingMartSql, setLoadingMartSql] = React.useState(false);
 
-function PerformanceCompare({ curatedModels }) {
-  const [selectedCurated, setSelectedCurated] = React.useState('');
-  const [sqlInput, setSqlInput] = React.useState('');
-  const [rowLimit, setRowLimit] = React.useState(10000);
-  const [manualSamples, setManualSamples] = React.useState([]);
-  const [dataflowSamples, setDataflowSamples] = React.useState([]);
-  const [manualFinal, setManualFinal] = React.useState(null);
-  const [dataflowFinal, setDataflowFinal] = React.useState(null);
-  const [status, setStatus] = React.useState({ manual: 'idle', dataflow: 'idle' });
-  const [error, setError] = React.useState('');
-  const [loadingSql, setLoadingSql] = React.useState(false);
-
+  // When a mart is selected, prefill the raw SQL with the mart query
   React.useEffect(() => {
-    if (!selectedCurated) return;
-    setLoadingSql(true);
-    fetch(`http://localhost:4000/curated-model/${selectedCurated}`)
-      .then(res => res.json())
-      .then(data => setSqlInput(data.sql || ''))
-      .catch(() => setSqlInput(''))
-      .finally(() => setLoadingSql(false));
-  }, [selectedCurated]);
-
-  const startStream = (runId, mode) => {
-    const es = new EventSource(`http://localhost:4000/api/perf/${runId}/stream`);
-    es.onmessage = (e) => {
-      try {
-        const sample = JSON.parse(e.data);
-        if (mode === 'manual') {
-          setManualSamples(prev => [...prev.slice(-199), sample]);
-          if (sample.status === 'done' || sample.status === 'error' || sample.status === 'cancelled') {
-            setManualFinal(sample);
-            setStatus(s => ({ ...s, manual: sample.status }));
-            es.close();
-          }
-        } else {
-          setDataflowSamples(prev => [...prev.slice(-199), sample]);
-          if (sample.status === 'done' || sample.status === 'error' || sample.status === 'cancelled') {
-            setDataflowFinal(sample);
-            setStatus(s => ({ ...s, dataflow: sample.status }));
-            es.close();
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    es.onerror = () => es.close();
-  };
-
-  const fetchFinal = async (runId, mode) => {
-    try {
-      const res = await fetch(`http://localhost:4000/api/perf/${runId}`);
-      const data = await res.json();
-      if (mode === 'manual') setManualFinal(data.final || data.meta || data);
-      else setDataflowFinal(data.final || data.meta || data);
-    } catch (err) {
-      console.error(err);
+    if (!selectedMart) {
+      setRawSql("");
+      return;
     }
-  };
+    setLoadingMartSql(true);
+    fetch(`http://localhost:4000/mart/${selectedMart}/source-sql`)
+      .then(res => res.json())
+      .then(data => {
+        const sql = data.sourceSql || data.martSql || "";
+        setRawSql(sql);
+      })
+      .catch(() => {
+        setRawSql("");
+      })
+      .finally(() => setLoadingMartSql(false));
+  }, [selectedMart]);
 
-  const runMode = async (mode) => {
+  const runComparison = async () => {
+    setError("");
+    setIsRunning(true);
+    setRawRows([]);
+    setMartRows([]);
+    setRawDuration(null);
+    setMartDuration(null);
     try {
-      setError('');
-      if (mode === 'manual' && !sqlInput.trim()) {
-        setError('Please provide SQL for manual run.');
-        return;
+      const t1 = performance.now();
+      const rawRes = await fetch("http://localhost:4000/api/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sql: rawSql, limit: rowLimit }),
+      });
+      const rawData = await rawRes.json();
+      if (!rawRes.ok || rawData.error) {
+        throw new Error(rawData.error || "Failed to run raw SQL");
       }
-      const body = mode === 'manual'
-        ? { sql: sqlInput, rowLimit }
-        : { curatedName: selectedCurated, rowLimit };
-      setStatus(s => ({ ...s, [mode]: 'running' }));
-      if (mode === 'manual') {
-        setManualSamples([]);
-        setManualFinal(null);
-      } else {
-        setDataflowSamples([]);
-        setDataflowFinal(null);
+      const t2 = performance.now();
+      setRawRows(rawData.preview || rawData.rows || []);
+      setRawDuration(t2 - t1);
+
+      const t3 = performance.now();
+      const martRes = await fetch(`http://localhost:4000/mart/${selectedMart}/data?limit=${rowLimit || 500}`);
+      const martData = await martRes.json();
+      if (!martRes.ok || martData.error) {
+        throw new Error(martData.error || "Failed to fetch mart data");
       }
-      const url = mode === 'manual' ? 'http://localhost:4000/api/execute/manual' : 'http://localhost:4000/api/execute/dataflow';
-      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to start run');
-      const runId = data.runId;
-      startStream(runId, mode);
-      fetchFinal(runId, mode);
+      const t4 = performance.now();
+      setMartRows(martData.rows || []);
+      setMartDuration(t4 - t3);
     } catch (err) {
       setError(err.message);
-      setStatus(s => ({ ...s, [mode]: 'idle' }));
     }
+    setIsRunning(false);
   };
 
-  const runBoth = () => {
-    runMode('manual');
-    if (selectedCurated) runMode('dataflow');
-  };
+  const rowsSummary = (rows) => (rows && rows.length ? `${rows.length} rows` : "No rows");
 
-  const summaryCard = (title, final, samples, color) => (
-    <div style={{ background: '#0b1224', border: '1px solid #1f2937', borderRadius: 10, padding: 16, boxShadow: '0 2px 10px rgba(0,0,0,0.25)', flex: 1, minWidth: 280 }}>
-      <div style={{ color: '#cbd5e1', fontWeight: 700, marginBottom: 8 }}>{title}</div>
-      <div style={{ display: 'flex', gap: 16, color: '#e2e8f0', fontSize: 14 }}>
-        <div><div style={{ color: '#94a3b8', fontSize: 12 }}>Elapsed</div><div style={{ fontWeight: 700 }}>{final?.elapsedMs ? final.elapsedMs.toFixed(2) : '—'} ms</div></div>
-        <div><div style={{ color: '#94a3b8', fontSize: 12 }}>CPU (user/sys)</div><div style={{ fontWeight: 700 }}>{final?.cpuUserMs ? final.cpuUserMs.toFixed(1) : '—'} / {final?.cpuSystemMs ? final.cpuSystemMs.toFixed(1) : '—'} ms</div></div>
-        <div><div style={{ color: '#94a3b8', fontSize: 12 }}>Rows</div><div style={{ fontWeight: 700 }}>{final?.rowsProcessed ?? '—'}</div></div>
-      </div>
-      <div style={{ marginTop: 12 }}>
-        <Sparkline samples={samples} field="elapsedMs" color={color} />
-      </div>
+  const renderTable = (rows) => {
+    if (!rows || rows.length === 0) return <div style={{ color: '#8f9bb3' }}>No data</div>;
+    const keys = Object.keys(rows[0] || {});
+    return (
+      <div style={{ overflow: 'auto', maxHeight: 320, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #0001', padding: 10 }}>
+        <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 13 }}>
+          <thead>
+            <tr>
+              {keys.map(key => (
+                <th key={key} style={{ background: '#f7fafc', color: '#222b45', padding: '4px 6px', borderBottom: '2px solid #e4e9f2', position: 'sticky', top: 0, fontWeight: 600 }}>{key}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr key={idx} style={{ background: idx % 2 === 0 ? '#f7fafc' : '#fff', height: 28 }}>
+                {keys.map((key, i) => (
+                  <td key={i} style={{ padding: '4px 6px', borderBottom: '1px solid #e4e9f2', color: '#333', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {String(row[key])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
     </div>
   );
+  };
 
   return (
-    <div style={{ padding: 32, background: 'linear-gradient(135deg, #111827 0%, #0b1224 100%)', minHeight: '100vh', color: '#e2e8f0' }}>
-      <h1 style={{ marginTop: 0, marginBottom: 8 }}>Performance Compare</h1>
-      <p style={{ color: '#94a3b8', marginTop: 0 }}>Run manual SQL vs curated DataFlow with live time & CPU metrics.</p>
-      {error && <div style={{ color: '#f87171', marginBottom: 12 }}>{error}</div>}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 20, alignItems: 'stretch' }}>
-        <div style={{ background: '#0b1224', border: '1px solid #1f2937', borderRadius: 12, padding: 16, boxShadow: '0 12px 32px rgba(0,0,0,0.35)' }}>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-            <div>
-              <div style={{ color: '#94a3b8', fontSize: 13 }}>Curated Model</div>
-              <select value={selectedCurated} onChange={e => setSelectedCurated(e.target.value)} style={{ padding: 8, minWidth: 220, borderRadius: 6, border: '1px solid #1f2937', background: '#111827', color: '#e2e8f0' }}>
-                <option value="">-- Optional: select curated model --</option>
-                {curatedModels.map(name => <option key={name} value={name}>{name}</option>)}
+    <div style={{ padding: 32, background: '#f4f6fa', minHeight: '100vh' }}>
+      <h1 style={{ margin: 0, color: '#111827' }}>Performance Compare</h1>
+      <p style={{ color: '#6b7280', marginTop: 6 }}>Compare raw SQL against a mart model query.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 20, marginTop: 18 }}>
+        <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,0.06)', padding: 16 }}>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: '#111827', fontWeight: 700, marginBottom: 6 }}>Mart model</div>
+            <select
+              value={selectedMart}
+              onChange={e => setSelectedMart(e.target.value)}
+              style={{ padding: 10, minWidth: 260, borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc' }}
+            >
+              <option value="">-- Select mart model --</option>
+              {martsModels.map(name => <option key={name} value={name}>{name}</option>)}
               </select>
             </div>
-            <div>
-              <div style={{ color: '#94a3b8', fontSize: 13 }}>Row limit</div>
-              <input type="number" value={rowLimit} onChange={e => setRowLimit(Number(e.target.value))} style={{ width: 120, padding: 8, borderRadius: 6, border: '1px solid #1f2937', background: '#111827', color: '#e2e8f0' }} />
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: '#111827', fontWeight: 700, marginBottom: 6 }}>Row limit</div>
+            <input
+              type="number"
+              value={rowLimit}
+              onChange={e => setRowLimit(Number(e.target.value))}
+              style={{ width: 140, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1' }}
+            />
             </div>
-          </div>
-          <div style={{ color: '#94a3b8', fontSize: 13, marginBottom: 4 }}>SQL {selectedCurated ? '(locked to curated model)' : '(editable for manual run)'}</div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ color: '#111827', fontWeight: 700, marginBottom: 6 }}>Raw SQL (source tables)</div>
           <textarea
-            value={sqlInput}
-            onChange={e => setSqlInput(e.target.value)}
-            readOnly={!!selectedCurated}
-            placeholder="Paste or type SQL..."
-            style={{ width: '100%', minHeight: 160, borderRadius: 8, border: '1px solid #1f2937', background: '#0f172a', color: '#e2e8f0', padding: 12 }}
+              value={rawSql}
+              onChange={e => setRawSql(e.target.value)}
+              placeholder="Mart SQL with curated tables inlined to their underlying queries; edit if needed"
+              style={{ width: '100%', minHeight: 160, borderRadius: 8, border: '1px solid #cbd5e1', background: '#f8fafc', padding: 12, fontSize: 14 }}
           />
-          {loadingSql && <div style={{ color: '#94a3b8', marginTop: 6 }}>Loading curated SQL…</div>}
-          <div style={{ display: 'flex', gap: 12, marginTop: 14, flexWrap: 'wrap' }}>
-            <button onClick={() => runMode('manual')} disabled={status.manual === 'running'} style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: '#22c55e', color: '#0b1224', fontWeight: 700, cursor: 'pointer' }}>Run Manual</button>
-            <button onClick={() => runMode('dataflow')} disabled={!selectedCurated || status.dataflow === 'running'} style={{ padding: '10px 18px', borderRadius: 8, border: 'none', background: selectedCurated ? '#60a5fa' : '#334155', color: '#0b1224', fontWeight: 700, cursor: selectedCurated ? 'pointer' : 'not-allowed' }}>Run DataFlow</button>
-            <button onClick={runBoth} disabled={!selectedCurated || status.manual === 'running' || status.dataflow === 'running'} style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid #1f2937', background: '#e2e8f0', color: '#0b1224', fontWeight: 700, cursor: selectedCurated ? 'pointer' : 'not-allowed' }}>Run Both</button>
+            {loadingMartSql && <div style={{ color: '#6b7280', fontSize: 12, marginTop: 6 }}>Loading mart SQL… adjust to source tables.</div>}
+            {!loadingMartSql && selectedMart && (
+              <div style={{ color: '#6b7280', fontSize: 12, marginTop: 6 }}>
+                Prefilled by inlining curated tables into the mart query so it runs directly on their source definitions.
           </div>
+            )}
+          </div>
+          <button
+            onClick={runComparison}
+            disabled={!rawSql.trim() || !selectedMart || isRunning}
+            style={{
+              padding: '12px 18px',
+              borderRadius: 8,
+              border: 'none',
+              background: (!rawSql.trim() || !selectedMart) ? '#cbd5e1' : 'linear-gradient(90deg, #0ea5e9 0%, #6366f1 100%)',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: (!rawSql.trim() || !selectedMart) ? 'not-allowed' : 'pointer',
+              boxShadow: '0 8px 20px rgba(0,0,0,0.12)',
+            }}
+          >
+            {isRunning ? 'Comparing...' : 'Run Comparison'}
+          </button>
+          {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ background: '#0b1224', border: '1px solid #1f2937', borderRadius: 12, padding: 14, boxShadow: '0 12px 32px rgba(0,0,0,0.35)' }}>
-            <div style={{ color: '#cbd5e1', fontWeight: 700, marginBottom: 8 }}>Live Metrics</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
-              <div style={{ background: '#111827', padding: 10, borderRadius: 8, border: '1px solid #1f2937' }}>
-                <div style={{ color: '#94a3b8', fontSize: 12 }}>Manual elapsed</div>
-                <div style={{ fontWeight: 800, fontSize: 18 }}>{manualSamples.at(-1)?.elapsedMs?.toFixed(1) || '—'} ms</div>
+          <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,0.06)', padding: 14 }}>
+            <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Summary</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 10, color: '#111827', fontSize: 14 }}>
+              <div><div style={{ color: '#6b7280', fontSize: 12 }}>Raw rows</div><div style={{ fontWeight: 800 }}>{rowsSummary(rawRows)}</div></div>
+              <div><div style={{ color: '#6b7280', fontSize: 12 }}>Mart rows</div><div style={{ fontWeight: 800 }}>{rowsSummary(martRows)}</div></div>
+              <div><div style={{ color: '#6b7280', fontSize: 12 }}>Raw duration</div><div style={{ fontWeight: 800 }}>{rawDuration ? rawDuration.toFixed(1) : '—'} ms</div></div>
+              <div><div style={{ color: '#6b7280', fontSize: 12 }}>Mart duration</div><div style={{ fontWeight: 800 }}>{martDuration ? martDuration.toFixed(1) : '—'} ms</div></div>
               </div>
-              <div style={{ background: '#111827', padding: 10, borderRadius: 8, border: '1px solid #1f2937' }}>
-                <div style={{ color: '#94a3b8', fontSize: 12 }}>Manual CPU</div>
-                <div style={{ fontWeight: 800, fontSize: 18 }}>{manualSamples.at(-1)?.cpuUserMs?.toFixed(1) || '—'} / {manualSamples.at(-1)?.cpuSystemMs?.toFixed(1) || '—'} ms</div>
               </div>
-              <div style={{ background: '#111827', padding: 10, borderRadius: 8, border: '1px solid #1f2937' }}>
-                <div style={{ color: '#94a3b8', fontSize: 12 }}>DataFlow elapsed</div>
-                <div style={{ fontWeight: 800, fontSize: 18 }}>{dataflowSamples.at(-1)?.elapsedMs?.toFixed(1) || '—'} ms</div>
+          <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,0.06)', padding: 14 }}>
+            <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Raw result</div>
+            {renderTable(rawRows)}
               </div>
-              <div style={{ background: '#111827', padding: 10, borderRadius: 8, border: '1px solid #1f2937' }}>
-                <div style={{ color: '#94a3b8', fontSize: 12 }}>DataFlow CPU</div>
-                <div style={{ fontWeight: 800, fontSize: 18 }}>{dataflowSamples.at(-1)?.cpuUserMs?.toFixed(1) || '—'} / {dataflowSamples.at(-1)?.cpuSystemMs?.toFixed(1) || '—'} ms</div>
-              </div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            {summaryCard('Manual run', manualFinal, manualSamples, '#22c55e')}
-            {summaryCard('DataFlow run', dataflowFinal, dataflowSamples, '#60a5fa')}
-          </div>
-          <div style={{ background: '#0b1224', border: '1px solid #1f2937', borderRadius: 12, padding: 14, boxShadow: '0 12px 32px rgba(0,0,0,0.35)' }}>
-            <div style={{ color: '#cbd5e1', fontWeight: 700, marginBottom: 8 }}>Comparison</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, color: '#e2e8f0', fontSize: 14 }}>
-              <div><div style={{ color: '#94a3b8', fontSize: 12 }}>Elapsed (ms)</div><div style={{ fontWeight: 800 }}>{manualFinal?.elapsedMs?.toFixed(1) || '—'} vs {dataflowFinal?.elapsedMs?.toFixed(1) || '—'}</div></div>
-              <div><div style={{ color: '#94a3b8', fontSize: 12 }}>CPU user (ms)</div><div style={{ fontWeight: 800 }}>{manualFinal?.cpuUserMs?.toFixed(1) || '—'} vs {dataflowFinal?.cpuUserMs?.toFixed(1) || '—'}</div></div>
-              <div><div style={{ color: '#94a3b8', fontSize: 12 }}>CPU system (ms)</div><div style={{ fontWeight: 800 }}>{manualFinal?.cpuSystemMs?.toFixed(1) || '—'} vs {dataflowFinal?.cpuSystemMs?.toFixed(1) || '—'}</div></div>
-              <div><div style={{ color: '#94a3b8', fontSize: 12 }}>Rows processed</div><div style={{ fontWeight: 800 }}>{manualFinal?.rowsProcessed ?? '—'} vs {dataflowFinal?.rowsProcessed ?? '—'}</div></div>
-            </div>
-            <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
-              {manualFinal?.reportPath && <a href={`http://localhost:4000/performance-reports/${manualFinal.reportPath}`} target="_blank" rel="noreferrer" style={{ color: '#60a5fa' }}>Manual report</a>}
-              {dataflowFinal?.reportPath && <a href={`http://localhost:4000/performance-reports/${dataflowFinal.reportPath}`} target="_blank" rel="noreferrer" style={{ color: '#60a5fa' }}>DataFlow report</a>}
-            </div>
+          <div style={{ background: '#fff', borderRadius: 10, boxShadow: '0 12px 32px rgba(0,0,0,0.06)', padding: 14 }}>
+            <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Mart result</div>
+            {renderTable(martRows)}
           </div>
         </div>
       </div>
@@ -1712,6 +2428,8 @@ function App() {
   const [sidebarStagings, setSidebarStagings] = useState([]);
   const [curatedModels, setCuratedModels] = useState([]); // List of curated model names
   const [selectedCurated, setSelectedCurated] = useState("");
+  const [martsModels, setMartsModels] = useState([]); // List of marts model names
+  const [selectedMart, setSelectedMart] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:4000/tables")
@@ -1739,6 +2457,14 @@ function App() {
       .catch(() => {
         // Silently fail - backend might not be running yet
         setCuratedModels([]);
+      });
+    // Fetch marts models for sidebar
+    fetch("http://localhost:4000/marts")
+      .then(res => res.json())
+      .then(data => setMartsModels(data.models || []))
+      .catch(() => {
+        // Silently fail - backend might not be running yet
+        setMartsModels([]);
       });
   }, []);
 
@@ -1784,6 +2510,9 @@ function App() {
               curatedModels={curatedModels}
               setSelectedCurated={setSelectedCurated}
               selectedCurated={selectedCurated}
+              martsModels={martsModels}
+              setSelectedMart={setSelectedMart}
+              selectedMart={selectedMart}
             />
             <main style={{ flex: 1, marginLeft: 220 }}>
               <Routes>
@@ -1837,7 +2566,8 @@ function App() {
                 } />
                 <Route path="staging" element={<Staging />} />
                 <Route path="curated" element={<CuratedModel curatedModels={curatedModels} setCuratedModels={setCuratedModels} selectedCurated={selectedCurated} setSelectedCurated={setSelectedCurated} />} />
-                <Route path="perf" element={<PerformanceCompare curatedModels={curatedModels} />} />
+                <Route path="marts" element={<MartModel martsModels={martsModels} setMartsModels={setMartsModels} selectedMart={selectedMart} setSelectedMart={setSelectedMart} />} />
+                <Route path="compare" element={<PerformanceCompare martsModels={martsModels} selectedMart={selectedMart} setSelectedMart={setSelectedMart} />} />
                 {/* Optionally, add /curated/:name route for direct linking */}
               </Routes>
             </main>

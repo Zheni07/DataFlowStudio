@@ -13,9 +13,12 @@ const FULL_CHART_ROWS = process.env.FULL_CHART_ROWS ? Number(process.env.FULL_CH
 const METADATA_DIR = path.join(__dirname, '../models/staging/metadata');
 const CURATED_DIR = path.join(__dirname, '../models/curated');
 const CURATED_META_DIR = path.join(CURATED_DIR, 'metadata');
+const MARTS_DIR = path.join(__dirname, '../models/marts');
+const MARTS_META_DIR = path.join(MARTS_DIR, 'metadata');
 const PERF_DIR = path.join(__dirname, '../models/curated/metadata/performance');
 fs.mkdirSync(METADATA_DIR, { recursive: true });
 fs.mkdirSync(CURATED_META_DIR, { recursive: true });
+fs.mkdirSync(MARTS_META_DIR, { recursive: true });
 fs.mkdirSync(PERF_DIR, { recursive: true });
 
 app.use(cors());
@@ -588,7 +591,7 @@ app.get('/curated-model/:name', (req, res) => {
 
 // Save or update a curated model
 app.post('/curated-models', async (req, res) => {
-  const { name, sql, documentation, tableDescription } = req.body;
+  const { name, sql, documentation, tableDescription, createTable = true } = req.body;
   if (!name || !sql) return res.status(400).json({ error: 'Missing name or SQL' });
   const filePath = path.join(CURATED_DIR, `${name}.sql`);
   fs.writeFileSync(filePath, sql);
@@ -600,6 +603,8 @@ app.post('/curated-models', async (req, res) => {
     previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
   }
   const db = new sqlite3.Database(DB_PATH);
+  let tableCreated = false;
+  let tableError = null;
   try {
     preview = await new Promise((resolve, reject) => {
       db.all(previewSQL, (err, rows) => err ? reject(err) : resolve(rows));
@@ -660,6 +665,21 @@ app.post('/curated-models', async (req, res) => {
       doc = [];
     }
   }
+  // Materialize curated table so marts layer can query it
+  if (createTable) {
+    try {
+      await new Promise((resolve, reject) => {
+        db.run(`DROP TABLE IF EXISTS "${name}"`, err => err ? reject(err) : resolve());
+      });
+      const selectSQL = sql.trim().replace(/;\s*$/, '');
+      await new Promise((resolve, reject) => {
+        db.run(`CREATE TABLE "${name}" AS ${selectSQL}`, err => err ? reject(err) : resolve());
+      });
+      tableCreated = true;
+    } catch (e) {
+      tableError = e.message;
+    }
+  }
   db.close();
 
   // Chart generation removed
@@ -674,7 +694,7 @@ app.post('/curated-models', async (req, res) => {
     timestamp: new Date().toISOString()
   };
   fs.writeFileSync(path.join(CURATED_META_DIR, `${name}.json`), JSON.stringify(meta, null, 2));
-  res.json({ success: true, file: filePath, meta });
+  res.json({ success: true, file: filePath, meta, tableCreated, tableError });
 });
 
 // Preview custom curated SQL (returns up to 100 rows and docs)
@@ -812,6 +832,424 @@ app.get('/curated-model/:name/export', async (req, res) => {
     }
   } catch (err) {
     console.error(`Error exporting curated model: ${err.message}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+function inlineCuratedIntoMartSql(sql) {
+  if (!sql) return '';
+  let finalSql = sql;
+  let curatedFiles = [];
+  try {
+    curatedFiles = fs.readdirSync(CURATED_META_DIR).filter(f => f.endsWith('.json'));
+  } catch (e) {
+    return finalSql;
+  }
+
+  const curatedMap = new Map();
+  curatedFiles.forEach(file => {
+    const name = file.replace(/\.json$/, '');
+    try {
+      const meta = JSON.parse(fs.readFileSync(path.join(CURATED_META_DIR, file), 'utf8'));
+      if (meta.sql) curatedMap.set(name, meta.sql.trim().replace(/;+\s*$/, ''));
+    } catch (e) {
+      /* ignore */
+    }
+  });
+
+  // Recursively inline curated references to reach staging/raw
+  let changed = true;
+  let iterations = 0;
+  while (changed && iterations < 5) {
+    changed = false;
+    iterations += 1;
+    curatedMap.forEach((curSql, name) => {
+      const fromRe = new RegExp(`\\bFROM\\s+("${name}"|${name})(?:\\s+AS)?(?:\\s+(\\w+))?`, 'gi');
+      const joinRe = new RegExp(`\\bJOIN\\s+("${name}"|${name})(?:\\s+AS)?(?:\\s+(\\w+))?`, 'gi');
+
+      const replacer = (alias) => {
+        const effectiveAlias = alias || name;
+        return `(${curSql}) AS ${effectiveAlias}`;
+      };
+
+      const newFinal = finalSql
+        .replace(fromRe, (match, _tbl, alias) => `FROM ${replacer(alias)}`)
+        .replace(joinRe, (match, _tbl, alias) => `JOIN ${replacer(alias)}`);
+
+      if (newFinal !== finalSql) {
+        changed = true;
+        finalSql = newFinal;
+      }
+    });
+  }
+
+  return finalSql;
+}
+
+// Execute a SQL query with limit enforcement and measure elapsed time
+async function runTimedQuery(sql, limit = FULL_CHART_ROWS) {
+  if (!sql) throw new Error('Missing SQL');
+  const db = new sqlite3.Database(DB_PATH);
+  const finalSQL = ensureLimit(sql, limit);
+  const start = process.hrtime.bigint();
+  const rows = await new Promise((resolve, reject) => {
+    db.all(finalSQL, (err, rows) => err ? reject(err) : resolve(rows));
+  });
+  db.close();
+  const elapsedMs = Number(process.hrtime.bigint() - start) / 1e6;
+  return { rows, elapsedMs };
+}
+
+// --- Marts layer endpoints ---
+// List all marts models
+app.get('/marts', (req, res) => {
+  fs.readdir(MARTS_META_DIR, (err, files) => {
+    if (err) return res.status(500).json({ error: err.message });
+    const names = files.filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''));
+    res.json({ models: names });
+  });
+});
+
+// Get a specific mart model (SQL, doc, preview)
+app.get('/mart/:name', (req, res) => {
+  const metaPath = path.join(MARTS_META_DIR, `${req.params.name}.json`);
+  fs.readFile(metaPath, 'utf8', (err, data) => {
+    if (err) return res.status(404).json({ error: 'Mart model not found' });
+    res.json(JSON.parse(data));
+  });
+});
+
+// Get mart SQL plus source-based SQL (curated inlined to their definitions)
+app.get('/mart/:name/source-sql', (req, res) => {
+  const metaPath = path.join(MARTS_META_DIR, `${req.params.name}.json`);
+  try {
+    const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    const martSql = meta.sql || '';
+    const sourceSql = inlineCuratedIntoMartSql(martSql);
+    res.json({ martSql, sourceSql });
+  } catch (err) {
+    res.status(404).json({ error: 'Mart model not found' });
+  }
+});
+
+// Compare a user-provided source SQL against a mart by executing both and timing
+app.post('/mart/:name/compare', async (req, res) => {
+  const { sourceSql, rowLimit = 1000, runs = 5 } = req.body || {};
+  const metaPath = path.join(MARTS_META_DIR, `${req.params.name}.json`);
+  try {
+    if (!sourceSql) return res.status(400).json({ error: 'Missing sourceSql' });
+
+    // Basic validation: source SQL should not reference curated or mart tables
+    const srcLower = String(sourceSql).toLowerCase();
+    const badNames = [];
+    try {
+      const curatedFiles = fs.readdirSync(CURATED_META_DIR).filter(f => f.endsWith('.json'));
+      curatedFiles.forEach(f => {
+        const n = f.replace(/\.json$/, '').toLowerCase();
+        if (srcLower.includes(n)) badNames.push(n);
+      });
+      const martFiles = fs.readdirSync(MARTS_META_DIR).filter(f => f.endsWith('.json'));
+      martFiles.forEach(f => {
+        const n = f.replace(/\.json$/, '').toLowerCase();
+        if (srcLower.includes(n)) badNames.push(n);
+      });
+    } catch (e) {
+      // ignore validation errors, fall back to allowing query
+    }
+    if (badNames.length > 0) {
+      return res.status(400).json({
+        error: 'Source SQL must not reference curated or mart tables',
+        tables: Array.from(new Set(badNames))
+      });
+    }
+
+    const runsClamped = Math.min(10, Math.max(1, Number(runs) || 5));
+
+    const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    const martSql = meta.sql || '';
+    if (!martSql) return res.status(400).json({ error: 'Mart SQL missing' });
+
+    const martTimes = [];
+    const rawTimes = [];
+    let martRowsSample = [];
+    let rawRowsSample = [];
+
+    for (let i = 0; i < runsClamped; i++) {
+      const rawRes = await runTimedQuery(sourceSql, rowLimit);
+      const martRes = await runTimedQuery(martSql, rowLimit);
+      rawTimes.push(rawRes.elapsedMs);
+      martTimes.push(martRes.elapsedMs);
+      if (i === 0) {
+        rawRowsSample = rawRes.rows;
+        martRowsSample = martRes.rows;
+      }
+    }
+
+    const stats = (arr) => {
+      const min = Math.min(...arr);
+      const max = Math.max(...arr);
+      const avg = arr.reduce((a, b) => a + b, 0) / (arr.length || 1);
+      return { min, max, avg };
+    };
+
+    const rawStats = stats(rawTimes);
+    const martStats = stats(martTimes);
+
+    const sameShape =
+      Array.isArray(rawRowsSample) &&
+      Array.isArray(martRowsSample) &&
+      rawRowsSample.length === martRowsSample.length &&
+      (rawRowsSample[0]
+        ? Object.keys(rawRowsSample[0]).join(',') ===
+          (martRowsSample[0] ? Object.keys(martRowsSample[0]).join(',') : '')
+        : true);
+
+    const marts_avg_time_ms = martStats.avg;
+    const raw_avg_time_ms = rawStats.avg;
+    const comparison_ratio = marts_avg_time_ms > 0 ? raw_avg_time_ms / marts_avg_time_ms : null;
+
+    res.json({
+      mart: req.params.name,
+      rowLimit,
+      runs: runsClamped,
+      marts_avg_time_ms,
+      raw_avg_time_ms,
+      comparison_ratio,
+      mart_stats: {
+        avg_ms: martStats.avg,
+        min_ms: martStats.min,
+        max_ms: martStats.max,
+        runs: martTimes,
+      },
+      raw_stats: {
+        avg_ms: rawStats.avg,
+        min_ms: rawStats.min,
+        max_ms: rawStats.max,
+        runs: rawTimes,
+      },
+      row_counts: {
+        raw: rawRowsSample.length,
+        mart: martRowsSample.length,
+      },
+      shape_equal: sameShape,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message || String(err) });
+  }
+});
+
+// Save or update a mart model
+app.post('/marts', async (req, res) => {
+  const { name, sql, documentation, tableDescription } = req.body;
+  if (!name || !sql) return res.status(400).json({ error: 'Missing name or SQL' });
+  const filePath = path.join(MARTS_DIR, `${name}.sql`);
+  fs.writeFileSync(filePath, sql);
+  // Preview and doc generation if not provided
+  let preview = [];
+  let doc = documentation || [];
+  let previewSQL = sql.trim();
+  if (!/limit\s+\d+/i.test(previewSQL)) {
+    previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
+  }
+  const db = new sqlite3.Database(DB_PATH);
+  try {
+    preview = await new Promise((resolve, reject) => {
+      db.all(previewSQL, (err, rows) => err ? reject(err) : resolve(rows));
+    });
+    // Normalize documentation structure: ensure 'name' field exists and preserve all fields
+    if (doc && doc.length > 0) {
+      doc = doc.map(col => {
+        const normalized = {
+          ...col,
+          name: col.name || col.column || col.source || col.original || '',
+          // Preserve all custom fields
+          description: col.description || '',
+          type: col.type || typeof preview[0]?.[col.name || col.column] || 'string',
+          nullable: col.nullable !== undefined ? col.nullable : (preview.length > 0 ? preview.some(row => row[col.name || col.column] === null || row[col.name || col.column] === '') : false),
+          unique: col.unique !== undefined ? col.unique : (preview.length > 0 ? new Set(preview.map(row => row[col.name || col.column])).size === preview.length : false),
+          testNull: col.testNull || false,
+          testUnique: col.testUnique || false
+        };
+        // Remove old field names to avoid confusion
+        delete normalized.column;
+        return normalized;
+      });
+    } else if (preview.length > 0) {
+      // Generate new documentation if none provided
+      const keys = Object.keys(preview[0]);
+      doc = keys.map(col => {
+        const values = preview.map(row => row[col]);
+        const nonNullValues = values.filter(v => v !== null && v !== '');
+        return {
+          name: col,
+          type: typeof preview[0][col],
+          description: '',
+          nullable: values.some(v => v === null || v === ''),
+          unique: new Set(nonNullValues).size === nonNullValues.length && nonNullValues.length === preview.length,
+          testNull: false,
+          testUnique: false
+        };
+      });
+    }
+  } catch (e) {
+    preview = [];
+    // Normalize documentation even if preview fails
+    if (doc && doc.length > 0) {
+      doc = doc.map(col => ({
+        ...col,
+        name: col.name || col.column || col.source || col.original || '',
+        description: col.description || '',
+        type: col.type || 'string',
+        nullable: col.nullable !== undefined ? col.nullable : false,
+        unique: col.unique !== undefined ? col.unique : false,
+        testNull: col.testNull || false,
+        testUnique: col.testUnique || false
+      })).map(col => {
+        delete col.column;
+        return col;
+      });
+    } else {
+      doc = [];
+    }
+  }
+  db.close();
+
+  // Save metadata
+  const meta = {
+    name,
+    sql,
+    tableDescription: tableDescription || '',
+    documentation: doc,
+    preview,
+    timestamp: new Date().toISOString()
+  };
+  fs.writeFileSync(path.join(MARTS_META_DIR, `${name}.json`), JSON.stringify(meta, null, 2));
+  res.json({ success: true, file: filePath, meta });
+});
+
+// Preview custom mart SQL (returns up to 100 rows and docs)
+app.post('/api/mart-preview', async (req, res) => {
+  const { sql } = req.body;
+  if (!sql) return res.status(400).json({ error: 'Missing SQL' });
+  let previewSQL = sql.trim();
+  if (!/limit\s+\d+/i.test(previewSQL)) {
+    previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
+  }
+  const db = new sqlite3.Database(DB_PATH);
+  try {
+    const preview = await new Promise((resolve, reject) => {
+      db.all(previewSQL, (err, rows) => err ? reject(err) : resolve(rows));
+    });
+    let columns = [];
+    if (preview.length > 0) {
+      const keys = Object.keys(preview[0]);
+      columns = keys.map(col => {
+        const values = preview.map(row => row[col]);
+        const nonNullValues = values.filter(v => v !== null && v !== '');
+        const type = detectType(nonNullValues);
+        const nullable = values.some(v => v === null || v === '');
+        const unique = new Set(nonNullValues).size === nonNullValues.length && nonNullValues.length === preview.length;
+        return {
+          name: col,
+          type,
+          nullable,
+          unique,
+        };
+      });
+    }
+    db.close();
+    res.json({ columns, preview });
+  } catch (e) {
+    db.close();
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// Fetch mart model data rows (for table view)
+app.get('/mart/:name/data', async (req, res) => {
+  const name = req.params.name;
+  const metaPath = path.join(MARTS_META_DIR, `${name}.json`);
+  const rawLimit = req.query.limit;
+  const limit = rawLimit === 'all' ? null : Number(rawLimit || 1000);
+
+  try {
+    const metaData = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    const sql = metaData.sql;
+    if (!sql) {
+      return res.status(400).json({ error: 'No SQL query found for this model' });
+    }
+
+    const db = new sqlite3.Database(DB_PATH);
+    let finalSQL = sql.trim();
+    if (limit && !/limit\s+\d+/i.test(finalSQL)) {
+      finalSQL = finalSQL.replace(/;*\s*$/, '') + ` LIMIT ${limit}`;
+    }
+    const rows = await new Promise((resolve, reject) => {
+      db.all(finalSQL, (err, rows) => err ? reject(err) : resolve(rows));
+    });
+    db.close();
+    res.json({ rows, limit });
+  } catch (err) {
+    console.error(`Error fetching mart model data: ${err.message}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Export mart model query results as CSV or JSON
+app.get('/mart/:name/export', async (req, res) => {
+  const name = req.params.name;
+  const format = req.query.format || 'csv'; // csv or json
+  const metaPath = path.join(MARTS_META_DIR, `${name}.json`);
+  
+  try {
+    const metaData = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+    const sql = metaData.sql;
+    
+    if (!sql) {
+      return res.status(400).json({ error: 'No SQL query found for this model' });
+    }
+    
+    // Execute the full query (no limit for export)
+    const db = new sqlite3.Database(DB_PATH);
+    const rows = await new Promise((resolve, reject) => {
+      db.all(sql.trim(), (err, rows) => err ? reject(err) : resolve(rows));
+    });
+    db.close();
+    
+    if (format === 'json') {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="${name}.json"`);
+      res.json(rows);
+    } else {
+      // CSV format
+      if (rows.length === 0) {
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}.csv"`);
+        return res.send('');
+      }
+      
+      const headers = Object.keys(rows[0]);
+      const csvRows = [headers.join(',')];
+      for (const row of rows) {
+        csvRows.push(headers.map(k => {
+          const val = row[k];
+          if (val == null) return '';
+          // Escape quotes and wrap in quotes if contains comma, newline, or quote
+          const str = String(val);
+          if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+            return '"' + str.replace(/"/g, '""') + '"';
+          }
+          return str;
+        }).join(','));
+      }
+      
+      const csv = csvRows.join('\n');
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="${name}.csv"`);
+      res.send(csv);
+    }
+  } catch (err) {
+    console.error(`Error exporting mart model: ${err.message}`);
     res.status(500).json({ error: err.message });
   }
 });

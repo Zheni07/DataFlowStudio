@@ -1,0 +1,8 @@
+{
+  "name": "mart_analyze",
+  "sql": "WITH base AS (\n  SELECT\n    date(COALESCE(order_date, last_order_date)) AS day,\n    customer_id,\n    product_id,\n    SUM(COALESCE(total_amount, 0)) AS total_amount,\n    SUM(COALESCE(quantity, 0)) AS total_quantity\n  FROM curated_total_sales_by_customer\n  GROUP BY day, customer_id, product_id\n)\nSELECT\n  day,\n  customer_id,\n  product_id,\n  total_amount,\n  total_quantity\nFROM base\nORDER BY day DESC, total_amount DESC;",
+  "tableDescription": "",
+  "documentation": [],
+  "preview": [],
+  "timestamp": "2025-12-15T08:34:35.138Z"
+}
