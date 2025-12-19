@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -157,17 +157,20 @@ function Staging() {
   const [tableDescription, setTableDescription] = React.useState("");
   const [dialect, setDialect] = React.useState("sqlite");
 
+
   // Load all saved stagings on mount or after save
-  React.useEffect(() => {
+  const loadStagings = useCallback(() => {
     fetch("http://localhost:4000/stagings")
       .then(res => res.json())
       .then(data => setStagings(data.stagings || []))
       .catch(() => {
-        // Silently fail - backend might not be running
         setStagings([]);
       });
-  }, [saveStatus]);
+  }, []);
 
+  React.useEffect(() => {
+    loadStagings();
+  }, [saveStatus, loadStagings]);
   // Load a selected staging
   React.useEffect(() => {
     if (!selectedStaging) return;
@@ -2276,7 +2279,7 @@ function PerformanceCompare({ martsModels, selectedMart, setSelectedMart }) {
     setRawDuration(null);
     setMartDuration(null);
     try {
-      const t1 = performance.now();
+      // Get preview rows for display
       const rawRes = await fetch("http://localhost:4000/api/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -2286,19 +2289,34 @@ function PerformanceCompare({ martsModels, selectedMart, setSelectedMart }) {
       if (!rawRes.ok || rawData.error) {
         throw new Error(rawData.error || "Failed to run raw SQL");
       }
-      const t2 = performance.now();
       setRawRows(rawData.preview || rawData.rows || []);
-      setRawDuration(t2 - t1);
 
-      const t3 = performance.now();
+      // Fetch mart rows for display
       const martRes = await fetch(`http://localhost:4000/mart/${selectedMart}/data?limit=${rowLimit || 500}`);
       const martData = await martRes.json();
       if (!martRes.ok || martData.error) {
         throw new Error(martData.error || "Failed to fetch mart data");
       }
-      const t4 = performance.now();
       setMartRows(martData.rows || []);
-      setMartDuration(t4 - t3);
+
+      // Server-side compare for reliable timings (warm-up + median)
+      try {
+        const cmpRes = await fetch(`http://localhost:4000/mart/${selectedMart}/compare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceSql: rawSql, rowLimit: rowLimit, runs: 5 })
+        });
+        const cmp = await cmpRes.json();
+        if (cmpRes.ok && !cmp.error) {
+          // Prefer median timings if available
+          const rawMs = cmp.raw_median_time_ms || cmp.raw_stats?.avg_ms;
+          const martMs = cmp.mart_median_time_ms || cmp.mart_stats?.avg_ms;
+          setRawDuration(rawMs != null ? Number(rawMs) : null);
+          setMartDuration(martMs != null ? Number(martMs) : null);
+        }
+      } catch (e) {
+        // Ignore compare failures — we still show preview data
+      }
     } catch (err) {
       setError(err.message);
     }

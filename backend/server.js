@@ -21,9 +21,57 @@ fs.mkdirSync(CURATED_META_DIR, { recursive: true });
 fs.mkdirSync(MARTS_META_DIR, { recursive: true });
 fs.mkdirSync(PERF_DIR, { recursive: true });
 
+// Persistent database connection for better performance
+const db = new sqlite3.Database(DB_PATH);
+// Enable WAL mode for better concurrent access
+db.run('PRAGMA journal_mode = WAL');
+// Enable query optimization
+db.run('PRAGMA synchronous = NORMAL');
+db.run('PRAGMA cache_size = 10000');
+
 app.use(cors());
 app.use(express.json());
 app.use('/performance-reports', express.static(PERF_DIR));
+
+// Close database on shutdown
+process.on('SIGINT', () => {
+  db.close(() => {
+    process.exit(0);
+  });
+});
+
+// In-memory caching for frequently accessed data
+const dataCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCacheKey(type, name) {
+  return `${type}:${name}`;
+}
+
+function getCachedData(type, name) {
+  const key = getCacheKey(type, name);
+  const cached = dataCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  dataCache.delete(key);
+  return null;
+}
+
+function setCachedData(type, name, data) {
+  const key = getCacheKey(type, name);
+  dataCache.set(key, { data, timestamp: Date.now() });
+  // Clean up cache if it grows too large
+  if (dataCache.size > 100) {
+    const oldestKey = Array.from(dataCache.entries()).sort((a, b) => a[1].timestamp - b[1].timestamp)[0][0];
+    dataCache.delete(oldestKey);
+  }
+}
+
+function invalidateCache(type, name) {
+  const key = getCacheKey(type, name);
+  dataCache.delete(key);
+}
 
 // In-memory performance job store for streaming
 const perfJobs = new Map();
@@ -180,7 +228,6 @@ async function runPerfJob({ runId, mode, sql, curatedName, rowLimit = FULL_CHART
   }, 400);
 
   try {
-    const db = new sqlite3.Database(DB_PATH);
     const finalSql = ensureLimit(sql, rowLimit);
     await new Promise((resolve, reject) => {
       db.all(finalSql, (err, rows) => {
@@ -189,7 +236,6 @@ async function runPerfJob({ runId, mode, sql, curatedName, rowLimit = FULL_CHART
         resolve();
       });
     });
-    db.close();
     if (job.cancelRequested) throw new Error('Cancelled');
     job.status = 'done';
     const finalSample = pushSample('done');
@@ -233,22 +279,55 @@ function detectType(values) {
 
 // List all tables in the SQLite database
 app.get('/tables', (req, res) => {
-  const db = new sqlite3.Database(DB_PATH);
   db.all(`SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`, (err, rows) => {
-    db.close();
     if (err) return res.status(500).json({ error: err.message });
     res.json(rows.map(row => row.name));
   });
 });
 
-// Get all data from a specific table
+// Get all data from a specific table with pagination and caching
 app.get('/table/:name', (req, res) => {
   const tableName = req.params.name;
-  const db = new sqlite3.Database(DB_PATH);
-  db.all(`SELECT * FROM "${tableName}"`, (err, rows) => {
-    db.close();
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(500, parseInt(req.query.limit) || 100); // Max 500 per page
+  const offset = (page - 1) * limit;
+
+  // Check cache for full table info
+  const cacheKey = `table:${tableName}:count`;
+  let countResult = getCachedData('table', `${tableName}:count`);
+  
+  Promise.all([
+    new Promise((resolve, reject) => {
+      if (countResult !== null) {
+        resolve(countResult);
+      } else {
+        db.get(`SELECT COUNT(*) as count FROM "${tableName}"`, (err, row) => {
+          if (err) reject(err);
+          else {
+            setCachedData('table', `${tableName}:count`, row.count);
+            resolve(row.count);
+          }
+        });
+      }
+    }),
+    new Promise((resolve, reject) => {
+      db.all(`SELECT * FROM "${tableName}" LIMIT ${limit} OFFSET ${offset}`, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows || []);
+      });
+    })
+  ]).then(([total, rows]) => {
+    res.json({
+      data: rows,
+      pagination: {
+        page,
+        limit,
+        total,
+        hasMore: offset + limit < total
+      }
+    });
+  }).catch(err => {
+    res.status(500).json({ error: err.message });
   });
 });
 
@@ -285,9 +364,7 @@ app.post('/preview-staging-sql', (req, res) => {
   if (!/limit\s+\d+/i.test(previewSQL)) {
     previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
   }
-  const db = new sqlite3.Database(DB_PATH);
   db.all(previewSQL, (err, rows) => {
-    db.close();
     if (err) return res.status(400).json({ error: err.message });
     res.json({ rows });
   });
@@ -301,7 +378,6 @@ app.post('/api/preview', async (req, res) => {
   if (!/limit\s+\d+/i.test(previewSQL)) {
     previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
   }
-  const db = new sqlite3.Database(DB_PATH);
   try {
     const preview = await new Promise((resolve, reject) => {
       db.all(previewSQL, (err, rows) => err ? reject(err) : resolve(rows));
@@ -323,10 +399,8 @@ app.post('/api/preview', async (req, res) => {
         };
       });
     }
-    db.close();
     res.json({ columns, preview });
   } catch (e) {
-    db.close();
     res.status(400).json({ error: e.message });
   }
 });
@@ -340,12 +414,23 @@ app.get('/stagings', (req, res) => {
   });
 });
 
-// Get a specific staging (SQL, doc, preview)
+// Get a specific staging (SQL, doc, preview) - with caching
 app.get('/staging/:name', (req, res) => {
-  const metaPath = path.join(METADATA_DIR, `${req.params.name}.json`);
+  const stagingName = req.params.name;
+  
+  // Check cache first
+  const cached = getCachedData('staging', stagingName);
+  if (cached) {
+    return res.json(cached);
+  }
+
+  const metaPath = path.join(METADATA_DIR, `${stagingName}.json`);
   fs.readFile(metaPath, 'utf8', (err, data) => {
     if (err) return res.status(404).json({ error: 'Staging not found' });
-    res.json(JSON.parse(data));
+    const staging = JSON.parse(data);
+    // Cache for 5 minutes
+    setCachedData('staging', stagingName, staging);
+    res.json(staging);
   });
 });
 
@@ -580,12 +665,23 @@ app.get('/curated-models', (req, res) => {
   });
 });
 
-// Get a specific curated model (SQL, doc, preview)
+// Get a specific curated model (SQL, doc, preview) - with caching
 app.get('/curated-model/:name', (req, res) => {
-  const metaPath = path.join(CURATED_META_DIR, `${req.params.name}.json`);
+  const modelName = req.params.name;
+  
+  // Check cache first
+  const cached = getCachedData('curated-model', modelName);
+  if (cached) {
+    return res.json(cached);
+  }
+
+  const metaPath = path.join(CURATED_META_DIR, `${modelName}.json`);
   fs.readFile(metaPath, 'utf8', (err, data) => {
     if (err) return res.status(404).json({ error: 'Curated model not found' });
-    res.json(JSON.parse(data));
+    const model = JSON.parse(data);
+    // Cache for 5 minutes
+    setCachedData('curated-model', modelName, model);
+    res.json(model);
   });
 });
 
@@ -694,6 +790,9 @@ app.post('/curated-models', async (req, res) => {
     timestamp: new Date().toISOString()
   };
   fs.writeFileSync(path.join(CURATED_META_DIR, `${name}.json`), JSON.stringify(meta, null, 2));
+  // Invalidate cache for this model
+  invalidateCache('curated-model', name);
+  invalidateCache('table', `${name}:count`);
   res.json({ success: true, file: filePath, meta, tableCreated, tableError });
 });
 
@@ -889,13 +988,11 @@ function inlineCuratedIntoMartSql(sql) {
 // Execute a SQL query with limit enforcement and measure elapsed time
 async function runTimedQuery(sql, limit = FULL_CHART_ROWS) {
   if (!sql) throw new Error('Missing SQL');
-  const db = new sqlite3.Database(DB_PATH);
   const finalSQL = ensureLimit(sql, limit);
   const start = process.hrtime.bigint();
   const rows = await new Promise((resolve, reject) => {
     db.all(finalSQL, (err, rows) => err ? reject(err) : resolve(rows));
   });
-  db.close();
   const elapsedMs = Number(process.hrtime.bigint() - start) / 1e6;
   return { rows, elapsedMs };
 }
@@ -974,6 +1071,14 @@ app.post('/mart/:name/compare', async (req, res) => {
     let martRowsSample = [];
     let rawRowsSample = [];
 
+    // Warm-up: run each query once to populate caches / JIT and then ignore
+    try {
+      await runTimedQuery(sourceSql, rowLimit);
+    } catch (e) { /* ignore warm-up errors */ }
+    try {
+      await runTimedQuery(martSql, rowLimit);
+    } catch (e) { /* ignore warm-up errors */ }
+
     for (let i = 0; i < runsClamped; i++) {
       const rawRes = await runTimedQuery(sourceSql, rowLimit);
       const martRes = await runTimedQuery(martSql, rowLimit);
@@ -995,6 +1100,26 @@ app.post('/mart/:name/compare', async (req, res) => {
     const rawStats = stats(rawTimes);
     const martStats = stats(martTimes);
 
+    function median(arr) {
+      if (!arr || arr.length === 0) return null;
+      const s = [...arr].sort((a, b) => a - b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 === 0 ? (s[mid - 1] + s[mid]) / 2 : s[mid];
+    }
+
+    function winsCount(rawArr, martArr) {
+      let rawWins = 0, martWins = 0;
+      for (let i = 0; i < Math.min(rawArr.length, martArr.length); i++) {
+        if (rawArr[i] < martArr[i]) rawWins++;
+        else if (martArr[i] < rawArr[i]) martWins++;
+      }
+      return { rawWins, martWins };
+    }
+
+    const raw_median_ms = median(rawTimes);
+    const mart_median_ms = median(martTimes);
+    const wins = winsCount(rawTimes, martTimes);
+
     const sameShape =
       Array.isArray(rawRowsSample) &&
       Array.isArray(martRowsSample) &&
@@ -1006,7 +1131,9 @@ app.post('/mart/:name/compare', async (req, res) => {
 
     const marts_avg_time_ms = martStats.avg;
     const raw_avg_time_ms = rawStats.avg;
-    const comparison_ratio = marts_avg_time_ms > 0 ? raw_avg_time_ms / marts_avg_time_ms : null;
+    const marts_median_time_ms = mart_median_ms;
+    const raw_median_time_ms = raw_median_ms;
+    const comparison_ratio = marts_median_time_ms > 0 ? raw_median_time_ms / marts_median_time_ms : null;
 
     res.json({
       mart: req.params.name,
@@ -1014,6 +1141,8 @@ app.post('/mart/:name/compare', async (req, res) => {
       runs: runsClamped,
       marts_avg_time_ms,
       raw_avg_time_ms,
+      marts_median_time_ms,
+      raw_median_time_ms,
       comparison_ratio,
       mart_stats: {
         avg_ms: martStats.avg,
@@ -1027,6 +1156,11 @@ app.post('/mart/:name/compare', async (req, res) => {
         max_ms: rawStats.max,
         runs: rawTimes,
       },
+      median_stats: {
+        mart_median_ms: marts_median_time_ms,
+        raw_median_ms: raw_median_time_ms,
+      },
+      wins: wins,
       row_counts: {
         raw: rawRowsSample.length,
         mart: martRowsSample.length,
@@ -1135,7 +1269,6 @@ app.post('/api/mart-preview', async (req, res) => {
   if (!/limit\s+\d+/i.test(previewSQL)) {
     previewSQL = previewSQL.replace(/;*\s*$/, '') + ' LIMIT 100';
   }
-  const db = new sqlite3.Database(DB_PATH);
   try {
     const preview = await new Promise((resolve, reject) => {
       db.all(previewSQL, (err, rows) => err ? reject(err) : resolve(rows));
@@ -1157,10 +1290,8 @@ app.post('/api/mart-preview', async (req, res) => {
         };
       });
     }
-    db.close();
     res.json({ columns, preview });
   } catch (e) {
-    db.close();
     res.status(400).json({ error: e.message });
   }
 });
@@ -1179,7 +1310,6 @@ app.get('/mart/:name/data', async (req, res) => {
       return res.status(400).json({ error: 'No SQL query found for this model' });
     }
 
-    const db = new sqlite3.Database(DB_PATH);
     let finalSQL = sql.trim();
     if (limit && !/limit\s+\d+/i.test(finalSQL)) {
       finalSQL = finalSQL.replace(/;*\s*$/, '') + ` LIMIT ${limit}`;
@@ -1187,7 +1317,6 @@ app.get('/mart/:name/data', async (req, res) => {
     const rows = await new Promise((resolve, reject) => {
       db.all(finalSQL, (err, rows) => err ? reject(err) : resolve(rows));
     });
-    db.close();
     res.json({ rows, limit });
   } catch (err) {
     console.error(`Error fetching mart model data: ${err.message}`);
