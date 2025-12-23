@@ -32,7 +32,9 @@ DataFlow Studio е приложение за обработка и анализ 
 Уверете се, че се намирате в главната папка на проекта(DATAFLOWSTUDIO). Отворете терминал и изпълнете:
 
 cd backend
+
 npm install
+
 npm start
 
 2. **Стартиране на frontend частта**
@@ -40,5 +42,7 @@ npm start
 Уверете се, че се намирате в главната папка на проекта(DATAFLOWSTUDIO). Отворете терминал и изпълнете:
 
 cd giiho-frontend
+
 npm install
+
 npm start
